@@ -12,4 +12,11 @@ class Index
     {
         return 'hello,' . $name;
     }
+
+    public function redis(){
+        $redis = new \Redis();
+        $redis->connect("127.0.0.1",6379);
+        $redis->set('test',"test word");
+        echo $redis->get('test');
+    }
 }
