@@ -1,8 +1,10 @@
 <?php
 namespace app\index;
 
-class Module{
+use think\Controller;
+
+class Module extends Controller{
     public function test(){
-        echo "hello word!!!!";
+        echo "hello word!!!";
     }
 }
