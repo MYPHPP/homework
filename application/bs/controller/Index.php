@@ -1,7 +1,6 @@
 <?php
 namespace app\bs\controller;
 
-use app\common\model\User;
 use think\Controller;
 use think\Request;
 use think\Validate;
@@ -15,6 +14,15 @@ class Index extends Controller{
             if($result['status'] != 200){
                 $msg = implode(',',$result['data']);
                 $this->error($msg);
+            }
+            $checkResult = $this->checkUnique($useModel,$result['data'],$choose);
+            if($checkResult){
+                $modelname = "\\app\\common\\model\\".$useModel;
+                $model = new $modelname;
+                $model->save($result['data']);
+                $this->success('新加成功');
+            }else{
+                $this->error("账号已存在");
             }
         }
         $menu = $this->getMenu($useModel,$choose);
@@ -61,5 +69,34 @@ class Index extends Controller{
             }
         }
         return $result;
+    }
+
+    public function checkUnique($modelname,$data,$choose="default"){
+        $check = [];
+        $useModel = "\\app\\common\\model\\".$modelname;
+        $model = new $useModel;
+        $menus = $this->getMenu($modelname,$choose);
+        foreach($menus->{$choose} as $menu){
+            if(isset($menu->unique) && $menu->unique == true){
+                $check[] = [$menu->name=>$data[$menu->name]];
+            }
+        }
+        $res = true;
+        if(!empty($check)){
+            if(count($check) == 1){
+                $query = $model->where($check);
+            }else{
+                $query = $model->where($check[0]);
+                unset($check[0]);
+                foreach($check as $val){
+                    $query = $query->whereOr($val);
+                }
+            }
+            $result = $query->find();
+            if(!empty($result)){
+                $res = false;
+            }
+        }
+        return $res;
     }
 }

@@ -24,6 +24,7 @@ class User extends Model{
                         'name.max'=>'姓名长度不能超过5个字符'
                     ],
                     'placeholder' => '请填写用户名',
+                    'unique' => true
                 ],
                 'passwd' => [
                     'label' => '密码',
@@ -48,7 +49,8 @@ class User extends Model{
                         'mobile.require' => "手机号不能为空",
                         'mobile.length' => "手机号要为11位的数字",
                         'mobile.regex' => "手机号格式错误",
-                    ]
+                    ],
+                    'unique' => true
                 ],
             ],
         ];
