@@ -8,21 +8,23 @@ use think\Validate;
 
 class Index extends Controller{
     public function index(Request $request){
+        $useModel = "User";
         $choose = "default";
         if($request->isPost()){
-            $result = $this->checkData($request,$choose);
+            $result = $this->checkData($request,$useModel,$choose);
             if($result['status'] != 200){
                 $msg = implode(',',$result['data']);
                 $this->error($msg);
             }
         }
-        $menu = $this->getMenu($choose);
+        $menu = $this->getMenu($useModel,$choose);
         $this->assign('menus',$menu->{$choose});
         return $this->fetch('login');
     }
 
-    public function getMenu($choose="default"){
-        $model = new User();
+    public function getMenu($modelname,$choose="default"){
+        $useModel = "\\app\\common\\model\\".$modelname;
+        $model = new $useModel;
         $menus = $model->getCF($choose);
         foreach($menus[$choose] as $key=>$menu){
             if(empty($menu['name'])){
@@ -33,11 +35,11 @@ class Index extends Controller{
         return $result;
     }
 
-    public function checkData(Request $request,$choose="default"){
+    public function checkData(Request $request,$useModel,$choose="default"){
         $rule = [];
         $tipMsg = [];
         $data = [];
-        $menus = $this->getMenu($choose);
+        $menus = $this->getMenu($useModel,$choose);
         foreach ($menus->{$choose} as $menu){
             if(!empty($menu->validate)){
                 $rule[$menu->name] = $menu->validate->rule;

@@ -39,6 +39,17 @@ class User extends Model{
                     'type' => 'radio',
                     'data' => ['男','女']
                 ],
+                'mobile' => [
+                    'label' => '手机号',
+                    'type' => 'text',
+                    'placeholder' => '请填手机号',
+                    'validate' => [
+                        'rule' => 'require|length:11|regex:^1[3,5,6,7,8,9]\d{9}',
+                        'mobile.require' => "手机号不能为空",
+                        'mobile.length' => "手机号要为11位的数字",
+                        'mobile.regex' => "手机号格式错误",
+                    ]
+                ],
             ],
         ];
     }
