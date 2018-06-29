@@ -15,6 +15,10 @@ Route::get('think', function () {
 
 Route::get('hello/:name', 'index/hello');
 
+Route::get('bs',"bs/index/index");
+Route::get('bs/login',"bs/index/index");
+Route::get('bs/inde/login',"bs/index/index");
+
 return [
 
 ];

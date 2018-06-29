@@ -1,0 +1,15 @@
+{php}
+$templates = "[temp]";
+$templates = explode(',',$templates);
+{/php}
+{notempty name='templates'}
+    {volist name='templates' id='filetype'}
+        {php}$choosefile = $menus->$filetype->type;{/php}
+        {switch choosefile}
+            {case select }{include file="common/select"/}{/case}
+            {case password }{include file="common/password"/}{/case}
+            {case radio }{include file="common/radio"/}{/case}
+            {default /}{include file="common/text"/}
+        {/switch}
+    {/volist}
+{/notempty}

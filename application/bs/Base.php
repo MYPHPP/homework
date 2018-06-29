@@ -1,16 +1,14 @@
 <?php
 namespace app\bs;
 
-use think\Controller;
+use app\Original;
 use think\Request;
 
-class Base extends Controller{
-    protected $controller;
-    protected $method;
-
+class Base extends Original{
     public function __construct(Request $request)
     {
-        $this->controller = $request->baseUrl();
-        echo $this->controller;die;
+        $module = strtolower($request->module());
+        $controller = strtolower($request->controller());
+        $method = strtolower($request->action());
     }
 }

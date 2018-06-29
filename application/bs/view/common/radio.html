@@ -1,0 +1,12 @@
+<div>
+    {php}echo $menus->$filetype->label;{/php} :
+    {php}
+        if(!empty($menus->$filetype->data)){
+            foreach($menus->$filetype->data as $val){
+                {/php}
+                    <input type="radio" name="{php}echo $menus->$filetype->name;{/php}" value="{$val}">
+                {php}
+            }
+        }
+    {/php}
+</div>
