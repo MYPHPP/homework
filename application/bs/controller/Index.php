@@ -26,7 +26,7 @@ class Index extends Controller{
             }
         }
         $menu = $this->getMenu($useModel,$choose);
-//        $this->assign('menus',$menu->{$choose});
+        $this->assign('menus',$menu->{$choose});
 //        return $this->fetch('login');
         echo 123;die;
     }
