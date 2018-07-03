@@ -25,7 +25,7 @@ class Index extends Controller{
                 $this->error("账号已存在");
             }
         }
-//        $menu = $this->getMenu($useModel,$choose);
+        $menu = $this->getMenu($useModel,$choose);
 //        $this->assign('menus',$menu->{$choose});
 //        return $this->fetch('login');
         echo 123;die;
