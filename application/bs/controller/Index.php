@@ -9,6 +9,7 @@ class Index extends Controller{
     public function index(Request $request){
         $useModel = "User";
         $choose = "default";
+        echo 123;die;
         if($request->isPost()){
             $result = $this->checkData($request,$useModel,$choose);
             if($result['status'] != 200){
