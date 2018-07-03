@@ -9,22 +9,7 @@ class Index extends Controller{
     public function index(Request $request){
         $useModel = "User";
         $choose = "default";
-        if($request->isPost()){
-            $result = $this->checkData($request,$useModel,$choose);
-            if($result['status'] != 200){
-                $msg = implode(',',$result['data']);
-                $this->error($msg);
-            }
-            $checkResult = $this->checkUnique($useModel,$result['data'],$choose);
-            if($checkResult){
-                $modelname = "\\app\\common\\model\\".$useModel;
-                $model = new $modelname;
-                $model->save($result['data']);
-                $this->success('新加成功');
-            }else{
-                $this->error("账号已存在");
-            }
-        }
+        
         $menu = $this->getMenu($useModel,$choose);
         $this->assign('menus',$menu->{$choose});
         return $this->fetch('login');
