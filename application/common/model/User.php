@@ -4,7 +4,7 @@ namespace app\common\model;
 use think\Model;
 
 class User extends Model{
-    protected $pk = "id";//设置主键
+    protected $pk = "lid";//设置主键
     protected $table = "tt_user";//设置表名
     //protected $connection = "";//设置数据库
 
@@ -18,6 +18,7 @@ class User extends Model{
                 'name' => [
                     'label' => '姓名',
                     'type' => "text",
+                    'required'=> true,
                     'validate'=>[
                         'rule'=>"require|max:5",
                         'name.require' => "姓名不能为空",
@@ -29,6 +30,7 @@ class User extends Model{
                 'passwd' => [
                     'label' => '密码',
                     'type' => 'password',
+                    'required'  => true,
                     'placeholder' => '请填写密码',
                     'validate' => [
                         'rule' => 'require',

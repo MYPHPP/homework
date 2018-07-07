@@ -1,12 +1,21 @@
 <?php
 namespace app\bs\controller;
 
+use app\common\model\User;
 use think\Controller;
 use think\Request;
 use think\Validate;
 
 class Index extends Controller{
     public function index(Request $request){
+        if(!empty(cookie('login_id'))){
+            session('login_id',cookie('login_id'));
+            if(!empty(cookie("currentUrl"))){
+                return redirect(cookie("currentUrl"));
+            }else{
+                return redirect('bs/dashboard/index');
+            }
+        }
         $useModel = "User";
         $choose = "default";
         if($request->isPost()){
@@ -15,20 +24,33 @@ class Index extends Controller{
                 $msg = implode(',',$result['data']);
                 $this->error($msg);
             }
-            $checkResult = $this->checkUnique($useModel,$result['data'],$choose);
-            if($checkResult){
-                $modelname = "\\app\\common\\model\\".$useModel;
-                $model = new $modelname;
-                $model->save($result['data']);
-                $this->success('新加成功');
+            $user = User::where(['name'=>$request->name,'passwd'=>$request->passwd])->field('lid,name')->find();
+            if(!empty($user)){
+                session('login_id',$user['lid']);
+                if(!empty($request->remember)){
+                    cookie("login_id",$user['lid'],7*86400);
+                }
+                if(!empty(cookie("currentUrl"))){
+                    return redirect(cookie("currentUrl"));
+                }else{
+                    return redirect('bs/dashboard/index');
+                }
             }else{
-                $this->error("账号已存在");
+                $this->error('账号或密码错误');
             }
+//            $checkResult = $this->checkUnique($useModel,$result['data'],$choose);
+//            if($checkResult){
+//                $modelname = "\\app\\common\\model\\".$useModel;
+//                $model = new $modelname;
+//                $model->save($result['data']);
+//                $this->success('新加成功');
+//            }else{
+//                $this->error("账号已存在");
+//            }
         }
         $menu = $this->getMenu($useModel,$choose);
         $this->assign('menus',$menu->{$choose});
         return $this->fetch('login');
-        echo 123;die;
     }
 
     public function getMenu($modelname,$choose="default"){
@@ -50,14 +72,16 @@ class Index extends Controller{
         $data = [];
         $menus = $this->getMenu($useModel,$choose);
         foreach ($menus->{$choose} as $menu){
-            if(!empty($menu->validate)){
-                $rule[$menu->name] = $menu->validate->rule;
-                $tips = explode('|',$menu->validate->rule);
-                foreach ($tips as $tip){
-                    if(strrpos($tip,':')){
-                        $tip = substr($tip,0,strrpos($tip,':'));
+            if(isset($request->{$menu->name})){
+                if(!empty($menu->validate)){
+                    $rule[$menu->name] = $menu->validate->rule;
+                    $tips = explode('|',$menu->validate->rule);
+                    foreach ($tips as $tip){
+                        if(strrpos($tip,':')){
+                            $tip = substr($tip,0,strrpos($tip,':'));
+                        }
+                        $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
                     }
-                    $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
                 }
             }
             $data[$menu->name] = filterChar($request->{$menu->name});
