@@ -2,11 +2,19 @@
 namespace app\common\model;
 
 use think\Model;
+use app\custom\Crypto;
 
 class User extends Model{
     protected $pk = "lid";//设置主键
     protected $table = "tt_user";//设置表名
     //protected $connection = "";//设置数据库
+
+    /*
+     * 加密密码
+     * */
+    public function setPasswdAttr($value){
+        return Crypto::aesencrypt($value);
+    }
 
     /*
      * 配置字段相关信息
@@ -20,9 +28,9 @@ class User extends Model{
                     'type' => "text",
                     'required'=> true,
                     'validate'=>[
-                        'rule'=>"require|max:5",
+                        'rule'=>"require|max:10",
                         'name.require' => "姓名不能为空",
-                        'name.max'=>'姓名长度不能超过5个字符'
+                        'name.max'=>'姓名长度不能超过10个字符'
                     ],
                     'placeholder' => '请填写用户名',
                     'unique' => true
@@ -33,8 +41,9 @@ class User extends Model{
                     'required'  => true,
                     'placeholder' => '请填写密码',
                     'validate' => [
-                        'rule' => 'require',
+                        'rule' => 'require|min:6',
                         'passwd.require' => "密码不能为空",
+                        'passwd.min' => "密码最少为6位字符",
                     ]
                 ],
                 'sex' => [
@@ -54,6 +63,15 @@ class User extends Model{
                     ],
                     'unique' => true
                 ],
+                'email' => [
+                    'label' => '邮箱',
+                    'type' => 'text',
+                    'placeholder' => '请填邮箱',
+                    'validate' => [
+                        'rule' => 'email',
+                        'email.email' => "邮箱格式错误",
+                    ]
+                ]
             ],
         ];
     }

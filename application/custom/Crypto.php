@@ -8,10 +8,10 @@ class Crypto{
     /*
      * aes加密
      * */
-    public function aesencrypt($plaintext,$key='opldkedw',$cipher="aes-256-cbc"){
+    static public function aesencrypt($plaintext,$key='opldkedw',$cipher="aes-256-cbc"){
         try{
             $cipher = 'aes-256-cbc';
-            if(!$this->check_cipher_method($cipher)){
+            if(!self::check_cipher_method($cipher)){
                 throw new \Exception("加密算法名称错误");
             }
             $ivlen = openssl_cipher_iv_length($cipher);
@@ -27,10 +27,10 @@ class Crypto{
     /*
      * aes解密
      * */
-    public function aesdecrypt($val,$key='opldkedw',$cipher="aes-256-cbc"){
+    static public function aesdecrypt($val,$key='opldkedw',$cipher="aes-256-cbc"){
         try{
             $cipher = 'aes-256-cbc';
-            if(!$this->check_cipher_method($cipher)){
+            if(!self::check_cipher_method($cipher)){
                 throw new \Exception("加密算法名称错误");
             }
             $val = base64_decode($val);
@@ -50,7 +50,7 @@ class Crypto{
      * @param $cipher_method 加密算法
      * return true or false
      * */
-    public function check_cipher_method($cipher_method){
+    static protected function check_cipher_method($cipher_method){
         $result = false;
         if(!empty($cipher_method)){
             if(in_array($cipher_method,openssl_get_cipher_methods())){

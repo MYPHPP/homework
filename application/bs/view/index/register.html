@@ -1,0 +1,46 @@
+{extend name="app" /}
+{block name='bodyclass'}
+login-page
+{/block}
+{block name="content"}
+<div class="login-box">
+    <div class="login-logo">
+        <b>注册</b>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg"></p>
+            <form action="" method="post">
+                {include file='common/base' temp='name,passwd,email'}
+                <div class="row">
+                    <div class="col-8">
+                        <div class="checkbox icheck">
+                            <label>
+
+                            </label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+{block name='footjs'}
+{load href="/plugins/iCheck/icheck.min.js" /}
+<script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass   : 'iradio_square-blue',
+            increaseArea : '20%' // optional
+        })
+    })
+</script>
+{/block}

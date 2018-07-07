@@ -7,6 +7,11 @@ use think\Request;
 use think\Validate;
 
 class Index extends Controller{
+    protected $useModel = "User";
+    protected $choose = "default";
+    /*
+     * 登录
+     * */
     public function index(Request $request){
         if(!empty(cookie('login_id'))){
             session('login_id',cookie('login_id'));
@@ -16,12 +21,14 @@ class Index extends Controller{
                 return redirect('bs/dashboard/index');
             }
         }
-        $useModel = "User";
-        $choose = "default";
         if($request->isPost()){
-            $result = $this->checkData($request,$useModel,$choose);
+            $result = $this->checkData($request,$this->useModel,$this->choose);
             if($result['status'] != 200){
-                $msg = implode(',',$result['data']);
+                if(is_array($result['data'])){
+                    $msg = implode(',',$result['data']);
+                }else{
+                    $msg = $result['data'];
+                }
                 $this->error($msg);
             }
             $user = User::where(['name'=>$request->name,'passwd'=>$request->passwd])->field('lid,name')->find();
@@ -38,19 +45,39 @@ class Index extends Controller{
             }else{
                 $this->error('账号或密码错误');
             }
-//            $checkResult = $this->checkUnique($useModel,$result['data'],$choose);
-//            if($checkResult){
-//                $modelname = "\\app\\common\\model\\".$useModel;
-//                $model = new $modelname;
-//                $model->save($result['data']);
-//                $this->success('新加成功');
-//            }else{
-//                $this->error("账号已存在");
-//            }
         }
-        $menu = $this->getMenu($useModel,$choose);
-        $this->assign('menus',$menu->{$choose});
+        $menu = $this->getMenu($this->useModel,$this->choose);
+        $this->assign('menus',$menu->{$this->choose});
         return $this->fetch('login');
+    }
+
+    /*
+     * 注册
+     * */
+    public function register(Request $request){
+        if($request->isPost()){
+            $result = $this->checkData($request,$this->useModel,$this->choose);
+            if($result['status'] != 200){
+                if(is_array($result['data'])){
+                    $msg = implode(',',$result['data']);
+                }else{
+                    $msg = $result['data'];
+                }
+                $this->error($msg);
+            }
+            $checkResult = $this->checkUnique($this->useModel,$result['data'],$this->choose);
+            if($checkResult){
+                $modelname = "\\app\\common\\model\\".$this->useModel;
+                $model = new $modelname;
+                $model->save($result['data']);
+                $this->success('新加成功','bs/index/index');
+            }else{
+                $this->error("账号已存在");
+            }
+        }
+        $menu = $this->getMenu($this->useModel,$this->choose);
+        $this->assign('menus',$menu->{$this->choose});
+        return $this->fetch('register');
     }
 
     public function getMenu($modelname,$choose="default"){
@@ -83,12 +110,13 @@ class Index extends Controller{
                         $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
                     }
                 }
+                $data[$menu->name] = filterChar($request->{$menu->name});
             }
-            $data[$menu->name] = filterChar($request->{$menu->name});
         }
         $result = ['status'=>200,'data'=>$data];
         if(!empty($rule)){
-            $validate = Validate::make($rule,$tipMsg)->batch();
+            //$validate = Validate::make($rule,$tipMsg)->batch();//批量验证
+            $validate = Validate::make($rule,$tipMsg);//单个验证
             if(!$validate->check($data)){
                 $result = ['status' => 301,'data'=>$validate->getError()];
             }
@@ -102,16 +130,16 @@ class Index extends Controller{
         $model = new $useModel;
         $menus = $this->getMenu($modelname,$choose);
         foreach($menus->{$choose} as $menu){
-            if(isset($menu->unique) && $menu->unique == true){
-                $check[] = [$menu->name=>$data[$menu->name]];
+            if(isset($data[$menu->name])){
+                if(isset($menu->unique) && $menu->unique == true){
+                    $check[] = [$menu->name=>$data[$menu->name]];
+                }
             }
         }
         $res = true;
         if(!empty($check)){
-            if(count($check) == 1){
-                $query = $model->where($check);
-            }else{
-                $query = $model->where($check[0]);
+            $query = $model->where($check[0]);
+            if(count($check) > 1){
                 unset($check[0]);
                 foreach($check as $val){
                     $query = $query->whereOr($val);
