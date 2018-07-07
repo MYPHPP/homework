@@ -31,16 +31,20 @@ class Index extends Controller{
                 }
                 $this->error($msg);
             }
-            $user = User::where(['name'=>$request->name,'passwd'=>$request->passwd])->field('lid,name')->find();
+            $user = User::where(['name'=>$request->name])->field('lid,name,passwd')->find();
             if(!empty($user)){
-                session('login_id',$user['lid']);
-                if(!empty($request->remember)){
-                    cookie("login_id",$user['lid'],7*86400);
-                }
-                if(!empty(cookie("currentUrl"))){
-                    return redirect(cookie("currentUrl"));
+                if(!empty($user['passwd']) && $user['passwd'] == $request->passwd){
+                    session('login_id',$user['lid']);
+                    if(!empty($request->remember)){
+                        cookie("login_id",$user['lid'],7*86400);
+                    }
+                    if(!empty(cookie("currentUrl"))){
+                        return redirect(cookie("currentUrl"));
+                    }else{
+                        return redirect('bs/dashboard/index');
+                    }
                 }else{
-                    return redirect('bs/dashboard/index');
+                    $this->error('账号或密码错误');
                 }
             }else{
                 $this->error('账号或密码错误');

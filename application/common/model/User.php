@@ -17,6 +17,13 @@ class User extends Model{
     }
 
     /*
+     * 解密密码
+     * */
+    public function getPasswdAttr($value){
+        return Crypto::aesdecrypt($value);
+    }
+
+    /*
      * 配置字段相关信息
      * */
     public function getCF($menu='default'){
