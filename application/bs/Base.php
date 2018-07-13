@@ -8,17 +8,31 @@ use think\Request;
 use think\Validate;
 
 class Base extends Controller {
+    protected $module;
+    protected $method;
+    protected $contrller;
+    protected $useModel;
+    protected $choose = "default";
+
     public function __construct(Request $request)
     {
         cookie("currentUrl",$request->url());
         if(empty(session('login_id'))){
             $this->redirect('bs/index/index');
         }
+        $this->module = strtolower($request->module());
+        $this->contrller = strtolower($request->controller());
+        $this->method = strtolower($request->action());
+        $this->useModel = ucfirst($this->contrller);
+    }
+
+    public function _empty(){
+        cookie("currentUrl",null);
+        echo 456;
+    }
+
+    protected function checkAuth(Request $request){
         $auth = false;
-        $module = strtolower($request->module());
-        $method = strtolower($request->controller());
-        $action = strtolower($request->action());
-        $menuid = Menu::where(['module'=>$module,'method'=>$method,'action'=>$action])->value('id');
     }
 
     public function getMenu($modelname,$choose="default"){
@@ -92,5 +106,10 @@ class Base extends Controller {
             }
         }
         return $res;
+    }
+
+    public function index(Request $request){
+        $menu = $this->getMenu($this->useModel,$this->choose);
+        return view(strtolower($request->action()),['menus'=>$menu->{$this->choose}]);
     }
 }

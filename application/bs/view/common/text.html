@@ -1,7 +1,11 @@
-<div class="form-group has-feedback">
-    {php}echo $menus->$filetype->label;{/php}&nbsp;&nbsp;
-    {if (isset($menus->$filetype->required)) AND ($menus->$filetype->required == true)}<span style="color:firebrick;size: 14px;"><b>*</b></span>{/if}：
-    <input name="{php}echo $menus->$filetype->name;{/php}" type="text" class="form-control" placeholder="{php}echo $menus->$filetype->placeholder;{/php}" {if (isset($menus->$filetype->required)) AND ($menus->$filetype->required == true)}required=required{/if} />
-    <span class="fa fa-envelope form-control-feedback"></span>
-</div>
-
+<!--<div class="row">-->
+    <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
+        <div class="form-group">
+            <label>
+                <span class="fa fa-envelope form-control-feedback"></span>{$menus->$template->label}
+                {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b>*</b></span>{/if}：
+            </label>
+            <input name="{php}echo $menus->$template->name;{/php}" type="text" class="form-control" placeholder="{php}echo $menus->$template->placeholder;{/php}" {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}required=required{/if} />
+        </div>
+    </div>
+<!--</div>-->

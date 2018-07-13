@@ -1,8 +1,19 @@
-{extend name="app" /}
-{block name='bodyclass'}
-login-page
-{/block}
-{block name="content"}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {load href="/plugins/font-awesome/css/font-awesome.min.css" /}
+    {load href="/css/ionicons.min.css" /}
+    {load href="/dist/css/adminlte.min.css" /}
+    {load href="/plugins/iCheck/square/blue.css" /}
+    {load href="/css/googleapi-fonts.css" /}
+    {load href="/plugins/jquery/jquery.min.js" /}
+    {load href="/plugins/bootstrap/js/bootstrap.bundle.min.js" /}
+</head>
+<body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
         <b>后台登录</b>
@@ -13,7 +24,14 @@ login-page
             <p class="login-box-msg"></p>
 
             <form action="" method="post">
-                {include file='common/base' temp='name,passwd'}
+                <div class="form-group has-feedback">
+                    <input name="name" type="text" class="form-control" placeholder="填写姓名">
+                    <span class="fa fa-envelope form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input name="passwd" type="password" class="form-control" placeholder="填写密码">
+                    <span class="fa fa-lock form-control-feedback"></span>
+                </div>
                 <div class="row">
                     <div class="col-8">
                         <div class="checkbox icheck">
@@ -34,13 +52,11 @@ login-page
                 <!--<a href="#">忘记密码？</a>-->
             </p>
             <p class="mb-0">
-                <a href="/bs/index/register" class="text-center">注册新账号</a>
+                <!--<a href="/bs/index/register" class="text-center">注册新账号</a>-->
             </p>
         </div>
     </div>
 </div>
-{/block}
-{block name='footjs'}
 {load href="/plugins/iCheck/icheck.min.js" /}
 <script>
     $(function () {
@@ -51,4 +67,5 @@ login-page
         })
     })
 </script>
-{/block}
+</body>
+</html>
