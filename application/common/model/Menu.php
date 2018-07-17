@@ -40,7 +40,6 @@ class Menu extends Base {
                     "type" => "text",
                     'placeholder' => '请填写路由',
                     "required" => true,
-                    "hidden" => true,
                     'validate'=>[
                         'rule'=>"require",
                         'title.require' => "名称不能为空",
@@ -55,6 +54,12 @@ class Menu extends Base {
                     "label" => "上级菜单",
                     "type" => "select2",
                     "data" => $this->getMenu()
+                ],
+                "radio" => [
+                    "label" => "单选",
+                    "type" => 'radio',
+                    "required" => true,
+                    "data" => [0=>["label"=>'男',"checked"=>true],1=>["label"=>"女"]]
                 ]
             ],
         ];

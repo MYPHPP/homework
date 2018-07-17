@@ -1,18 +1,16 @@
-<!--<div class="row">-->
-    <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php}">
-        <div class="form-group">
-            <label>{$menus->$template->label} :</label>
-            <select class="form-control select2" style="width: 100%;" name="{$menus->$template->name}">
-                <option value="0">父级菜单</option>
-                {php}
-                    if(!empty($menus->$template->data)){
-                    foreach($menus->$template->data as $menu){
-                {/php}
-                <option value="{$menu->id}">{$menu->title}</option>
-                {php}
-                    }}
-                {/php}
-            </select>
-        </div>
+<div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php}">
+    <div class="form-group">
+        <label>{$menus->$template->label} :</label>
+        <select id="{$menus->$template->name}" class="form-control select2" style="width: 100%;" name="{$menus->$template->name}">
+            <option value="0">父级菜单</option>
+            {php}
+                if(!empty($menus->$template->data)){
+                foreach($menus->$template->data as $menu){
+            {/php}
+            <option value="{$menu->id}">{$menu->title}</option>
+            {php}
+                }}
+            {/php}
+        </select>
     </div>
-<!--</div>-->
+</div>

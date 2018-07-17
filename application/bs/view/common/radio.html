@@ -1,12 +1,18 @@
-<div>
-    {php}echo $menus->$filetype->label;{/php} :
-    {php}
-        if(!empty($menus->$filetype->data)){
-            foreach($menus->$filetype->data as $val){
-                {/php}
-                    <input type="radio" name="{php}echo $menus->$filetype->name;{/php}" value="{$val}">
-                {php}
-            }
-        }
-    {/php}
+<div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
+    <div class="form-group">
+        <label>
+            {$menus->$template->label}
+            {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b>*</b></span>{/if}：
+        </label>
+        {php}
+        if(!empty($menus->$template->data)){
+        foreach($menus->$template->data as $d=>$r){
+            {/php}
+            <label>
+                {$r->label}&nbsp;&nbsp;<input id="{$menus->$template->name}" type="radio" name="{$menus->$template->name}" class="minimal" value="{$d}" {if isset($r->checked)&& $r->checked == true}checked{/if} {if isset($menus->$template->required)&&$menus->$template->required == true}required{/if}>
+            </label>&nbsp;&nbsp;&nbsp;&nbsp;
+            {php}
+            } }
+        {/php}
+    </div>
 </div>

@@ -6,14 +6,20 @@ if(count($templates) > 1){
     $i = 0;
     $n = 0;
     foreach($templates as $tpl){
-        if($n % 2 == 0){
-            $i++;
+        $remainder = $i % 2;
+        if($remainder == 0){
+            $n++;
         }
-        $viewArrs[$i][] = $tpl;
-        if(in_array($menus->$tpl->type,["hide","hidden"])){
-
+        if(isset($menus->$tpl->hidden)&&in_array($menus->$tpl->hidden,[1,"hide","hidden"])){
+            $i--;
+            if($remainder == 0){
+                $n--;
+            }
         }
+        $viewArrs[$n][] = $tpl;
+        $i++;
     }
+
     foreach($viewArrs as $viewarr){
         echo '<div class="row">';
         foreach($viewarr as $template){

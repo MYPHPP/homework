@@ -1,11 +1,7 @@
-<!--<div class="row">-->
-    <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
-        <div class="form-group">
-            <label>
-                <span class="fa fa-envelope form-control-feedback"></span>{$menus->$template->label}
-                {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b>*</b></span>{/if}：
-            </label>
-            <input name="{php}echo $menus->$template->name;{/php}" type="text" class="form-control" placeholder="{php}echo $menus->$template->placeholder;{/php}" {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}required=required{/if} />
-        </div>
+<div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
+    <div class="form-group">
+        <label>{$menus->$template->label}</label>
+            {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b>*</b></span>{/if}：
+        <input id="{$menus->$template->name}" name="{$menus->$template->name}" type="text" class="form-control" placeholder="{php}echo $menus->$template->placeholder;{/php}" {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}required=required{/if} />
     </div>
-<!--</div>-->
+</div>
