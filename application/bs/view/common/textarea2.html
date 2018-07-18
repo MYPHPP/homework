@@ -1,0 +1,40 @@
+<div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
+    <div class="card card-info card-outline">
+        <div class="card-header">
+            <h3 class="card-title">
+                {$menus->$template->label}
+            </h3>
+            <!-- tools box -->
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool btn-sm"
+                        data-widget="collapse"
+                        data-toggle="tooltip"
+                        title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool btn-sm"
+                        data-widget="remove"
+                        data-toggle="tooltip"
+                        title="Remove">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <!-- /. tools -->
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div class="mb-3">
+                <textarea id="{$menus->$template->name}" name="{$menus->$template->name}" style="width: 100%" placeholder="{$menus->$template->placeholder}"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        ClassicEditor
+            .create(document.querySelector('#'+"{$menus->$template->name}"))
+            .catch(function (error) {
+                console.error(error)
+            })
+    })
+</script>

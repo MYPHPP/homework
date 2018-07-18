@@ -1,4 +1,7 @@
-<div class="form-group">
-    <label>{php}echo $menus->$filetype->label;{/php}</label>
-    <textarea class="form-control" rows="3" placeholder="{$menus->$filetype->placeholder}"></textarea>
+<div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
+    <div class="form-group">
+        <label>{$menus->$template->label}</label>
+        {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b> * </b></span>{/if}：
+        <textarea id="{$menus->$template->name}" name="{$menus->$template->name}" class="form-control" rows="3" placeholder="{$menus->$template->placeholder}" {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}required=required{/if}></textarea>
+    </div>
 </div>

@@ -26,8 +26,12 @@ if(count($templates) > 1){
             $targetFile = $menus->$template->type;
             {/php}
             {switch targetFile}
+            {case select4 }{include file="common/select4"/}{/case}
+            {case select3 }{include file="common/select3"/}{/case}
             {case select2 }{include file="common/select2"/}{/case}
             {case select }{include file="common/select"/}{/case}
+            {case textarea2 }{include file="common/textarea2"/}{/case}
+            {case textarea }{include file="common/textarea"/}{/case}
             {case password }{include file="common/password"/}{/case}
             {case radio }{include file="common/radio"/}{/case}
             {default /}{include file="common/text"/}
@@ -41,8 +45,12 @@ if(count($templates) > 1){
 {notempty name='templates'}
 {php}$template = $templates[0];$targetFile = $menus->$template->type;{/php}
     {switch targetFile}
+        {case select4 }{include file="common/select4"/}{/case}
+        {case select3 }{include file="common/select3"/}{/case}
         {case select2 }{include file="common/select2"/}{/case}
         {case select }{include file="common/select"/}{/case}
+        {case textarea2 }{include file="common/textarea2"/}{/case}
+        {case textarea }{include file="common/textarea"/}{/case}
         {case password }{include file="common/password"/}{/case}
         {case radio }{include file="common/radio"/}{/case}
         {default /}{include file="common/text"/}

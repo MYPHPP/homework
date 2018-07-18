@@ -1,4 +1,9 @@
 {extend name="app" /}
 {block name="content"}
-{include file="common/base" temp="pid,radio,title,route"}
+<form action="" method="post">
+{include file="common/base" temp="pid,radio,title,route,description"}
+<div>
+    <input type="submit" class="btn btn-block btn-primary btn-lg" value="提交">
+</div>
+</form>
 {/block}

@@ -47,12 +47,12 @@ class Menu extends Base {
                 ],
                 'description' => [
                     "label" => "描述",
-                    "type" => "textarea",
+                    "type" => "textarea2",
                     "placeholder" => "填写描述",
                 ],
                 'pid' => [
                     "label" => "上级菜单",
-                    "type" => "select2",
+                    "type" => "select3",
                     "data" => $this->getMenu()
                 ],
                 "radio" => [
