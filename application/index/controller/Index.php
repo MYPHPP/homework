@@ -56,4 +56,6 @@ class Index extends Module
         $redis->set('test',"test word");
         echo $redis->get('test');
     }
+
+    public function test(){}
 }
