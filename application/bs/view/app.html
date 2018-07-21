@@ -503,7 +503,6 @@
         </aside>
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            {block name="content"}
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <div class="container-fluid">
@@ -524,6 +523,7 @@
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
+                    {block name="content"}
                     <!-- COLOR PALETTE -->
                     <div class="card card-default color-palette-box">
                         <div class="card-header">
@@ -1332,10 +1332,11 @@
                     </div>
                     <!-- /.row -->
                     <!-- END TYPOGRAPHY -->
+                    {/block}
                 </div><!-- /.container-fluid -->
             </section>
             <!-- /.content -->
-            {/block}
+
         </div>
         <!-- /.content-wrapper -->
     </div>

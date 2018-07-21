@@ -4,4 +4,5 @@
         {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b> * </b></span>{/if}：
         <textarea id="{$menus->$template->name}" name="{$menus->$template->name}" class="form-control" rows="3" placeholder="{$menus->$template->placeholder}" {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}required=required{/if}></textarea>
     </div>
+    <span>{if isset($menus->$template->tip)}{$menus->$template->tip}{/if}</span>
 </div>

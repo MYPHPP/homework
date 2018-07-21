@@ -1,8 +1,8 @@
 <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php}">
     <div class="form-group">
         <label>{$menus->$template->label} :</label>
-        <select id="{$menus->$template->name}" class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" name="{$menus->$template->name}">
-            <option value="0">父级菜单</option>
+        <select id="{$menus->$template->name}" class="form-control select2" multiple="multiple" data-placeholder="请选择" style="width: 100%;" name="{$menus->$template->name}[]">
+            <option value="0">顶级菜单</option>
             {php}
                 if(!empty($menus->$template->data)){
                 foreach($menus->$template->data as $menu){
@@ -12,5 +12,6 @@
                 }}
             {/php}
         </select>
+        <span>{if isset($menus->$template->tip)}{$menus->$template->tip}{/if}</span>
     </div>
 </div>

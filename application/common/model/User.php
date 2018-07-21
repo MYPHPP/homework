@@ -10,6 +10,13 @@ class User extends Model{
     //protected $connection = "";//设置数据库
 
     /*
+     * 设置角色关联模型
+     * */
+    public function role(){
+        return $this->hasOne('Role',"id",'roleid');
+    }
+
+    /*
      * 加密密码
      * */
     public function setPasswdAttr($value){
@@ -35,12 +42,12 @@ class User extends Model{
                     'type' => "text",
                     'required'=> true,
                     'validate'=>[
-                        'rule'=>"require|max:10",
+                        'rule'=>"require|max:10|unique:user",
                         'name.require' => "姓名不能为空",
-                        'name.max'=>'姓名长度不能超过10个字符'
+                        'name.max'=>'姓名长度不能超过10个字符',
+                        'name.unique'=>'改用户名已被注册',
                     ],
                     'placeholder' => '请填写用户名',
-                    'unique' => true
                 ],
                 'passwd' => [
                     'label' => '密码',

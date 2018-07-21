@@ -9,15 +9,13 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+use \app\common\model\Menu;
+
 Route::get('think', function () {
     return 'hello,ThinkPHP5!';
 });
 
 Route::get('hello/:name', 'index/hello');
-
-//Route::get('bs',"bs/index/index");
-//Route::get('bs/login',"bs/index/index");
-//Route::get('bs/inde/login',"bs/index/index");
 
 return [
 

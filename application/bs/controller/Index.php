@@ -22,15 +22,10 @@ class Index extends Controller{
             }
         }
         if($request->isPost()){
-            $result = $this->checkData($request,$this->useModel,$this->choose);
-            if($result['status'] != 200){
-                if(is_array($result['data'])){
-                    $msg = implode(',',$result['data']);
-                }else{
-                    $msg = $result['data'];
-                }
-                $this->error($msg);
+            if(empty($request->name) || empty($request->passwd)){
+                $this->error("信息填写不完整");
             }
+            $request->name = filterChar($request->name);
             $user = User::where(['name'=>$request->name])->field('lid,name,passwd')->find();
             if(!empty($user)){
                 if(!empty($user['passwd']) && $user['passwd'] == $request->passwd){
@@ -60,6 +55,9 @@ class Index extends Controller{
      * */
     public function register(Request $request){
         if($request->isPost()){
+            if(!isset($request->accept) || $request->accept != 1){
+                $this->error("还没接受注册协议");
+            }
             $result = $this->checkData($request,$this->useModel,$this->choose);
             if($result['status'] != 200){
                 if(is_array($result['data'])){
@@ -69,15 +67,10 @@ class Index extends Controller{
                 }
                 $this->error($msg);
             }
-            $checkResult = $this->checkUnique($this->useModel,$result['data'],$this->choose);
-            if($checkResult){
-                $modelname = "\\app\\common\\model\\".$this->useModel;
-                $model = new $modelname;
-                $model->save($result['data']);
-                $this->success('新加成功','bs/index/index');
-            }else{
-                $this->error("账号已存在");
-            }
+            $modelname = "\\app\\common\\model\\".$this->useModel;
+            $model = new $modelname;
+            $model->save($result['data']);
+            $this->success('新加成功','bs/index/index');
         }
         $menu = $this->getMenu($this->useModel,$this->choose);
         $this->assign('menus',$menu->{$this->choose});
@@ -104,6 +97,7 @@ class Index extends Controller{
         $menus = $this->getMenu($useModel,$choose);
         foreach ($menus->{$choose} as $menu){
             if(isset($request->{$menu->name})){
+                //查找验证规则
                 if(!empty($menu->validate)){
                     $rule[$menu->name] = $menu->validate->rule;
                     $tips = explode('|',$menu->validate->rule);
@@ -113,6 +107,9 @@ class Index extends Controller{
                         }
                         $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
                     }
+                }
+                if(is_array($request->{$menu->name})){
+                    $request->{$menu->name} = implode(",",$request->{$menu->name});
                 }
                 $data[$menu->name] = filterChar($request->{$menu->name});
             }
@@ -128,32 +125,7 @@ class Index extends Controller{
         return $result;
     }
 
-    public function checkUnique($modelname,$data,$choose="default"){
-        $check = [];
-        $useModel = "\\app\\common\\model\\".$modelname;
-        $model = new $useModel;
-        $menus = $this->getMenu($modelname,$choose);
-        foreach($menus->{$choose} as $menu){
-            if(isset($data[$menu->name])){
-                if(isset($menu->unique) && $menu->unique == true){
-                    $check[] = [$menu->name=>$data[$menu->name]];
-                }
-            }
-        }
-        $res = true;
-        if(!empty($check)){
-            $query = $model->where($check[0]);
-            if(count($check) > 1){
-                unset($check[0]);
-                foreach($check as $val){
-                    $query = $query->whereOr($val);
-                }
-            }
-            $result = $query->find();
-            if(!empty($result)){
-                $res = false;
-            }
-        }
-        return $res;
+    public function abort($type = 404){
+        return $this->fetch('error/'.$type);
     }
 }

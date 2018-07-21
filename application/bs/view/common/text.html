@@ -3,5 +3,6 @@
         <label>{$menus->$template->label}</label>
             {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b> * </b></span>{/if}：
         <input id="{$menus->$template->name}" name="{$menus->$template->name}" type="text" class="form-control" placeholder="{php}echo $menus->$template->placeholder;{/php}" {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}required=required{/if} />
+        <span>{if isset($menus->$template->tip)}{$menus->$template->tip}{/if}</span>
     </div>
 </div>

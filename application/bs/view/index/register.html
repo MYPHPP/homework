@@ -1,45 +1,67 @@
-{extend name="app" /}
-{block name='bodyclass'}
-login-page
-{/block}
-{block name="content"}
-<div class="login-box">
-    <div class="login-logo">
-        <b>注册</b>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Register</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font Awesome -->
+    {load href="/plugins/font-awesome/css/font-awesome.min.css" /}
+    <!-- Ionicons -->
+    {load href="/css/ionicons.min.css" /}
+    <!-- Theme style -->
+    {load href="/dist/css/adminlte.min.css" /}
+    <!-- iCheck -->
+    {load href="/plugins/iCheck/square/blue.css" /}
+    <!-- Google Font: Source Sans Pro -->
+    {load href="/css/googleapi-fonts.css" /}
+    {load href="/plugins/jquery/jquery.min.js" /}
+    {load href="/plugins/bootstrap/js/bootstrap.bundle.min.js" /}
+</head>
+<body class="hold-transition register-page">
+<div class="register-box">
+    <div class="register-logo">
+        <a href="#"><b>Admin</b></a>
     </div>
-    <!-- /.login-logo -->
+
     <div class="card">
-        <div class="card-body login-card-body">
-            <p class="login-box-msg"></p>
+        <div class="card-body register-card-body">
+            <p class="login-box-msg">Register a new membership</p>
             <form action="" method="post">
-                {include file='common/base' temp='name,passwd,email'}
+                <div class="form-group has-feedback">
+                    <input type="text" name="name" class="form-control" placeholder="用户名">
+                    <span class="fa fa-user form-control-feedback">用户名</span>
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" name="passwd" class="form-control" placeholder="密码">
+                    <span class="fa fa-lock form-control-feedback">密码</span>
+                </div>
                 <div class="row">
                     <div class="col-8">
                         <div class="checkbox icheck">
                             <label>
-
+                                <input type="checkbox" name="accept" value="1"> I agree to the <a href="#">terms</a>
                             </label>
                         </div>
                     </div>
                     <!-- /.col -->
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
                     </div>
                     <!-- /.col -->
                 </div>
-
-                <p class="mb-1">
-                    <!--<a href="#">忘记密码？</a>-->
-                </p>
-                <p class="mb-0">
-                    <a href="/bs/index/index" class="text-center">已有账号，去登录</a>
-                </p>
             </form>
+
+            <a href="/bs/index/index" class="text-center">I already have a membership</a>
         </div>
-    </div>
+        <!-- /.form-box -->
+    </div><!-- /.card -->
 </div>
-{/block}
-{block name='footjs'}
+<!-- /.register-box -->
+
+<!-- iCheck -->
 {load href="/plugins/iCheck/icheck.min.js" /}
 <script>
     $(function () {
@@ -50,4 +72,5 @@ login-page
         })
     })
 </script>
-{/block}
+</body>
+</html>

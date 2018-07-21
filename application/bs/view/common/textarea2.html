@@ -26,6 +26,7 @@
             <div class="mb-3">
                 <textarea id="{$menus->$template->name}" name="{$menus->$template->name}" style="width: 100%" placeholder="{$menus->$template->placeholder}"></textarea>
             </div>
+            <span>{if isset($menus->$template->tip)}{$menus->$template->tip}{/if}</span>
         </div>
     </div>
 </div>

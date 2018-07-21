@@ -2,6 +2,8 @@
 namespace app\bs;
 
 use app\common\model\Menu;
+use app\common\model\Role;
+use app\common\model\User;
 use think\cache\driver\Redis;
 use think\Controller;
 use think\Request;
@@ -17,25 +19,75 @@ class Base extends Controller {
     public function __construct(Request $request)
     {
         cookie("currentUrl",$request->url());
-        if(empty(session('login_id'))){
-            $this->redirect('bs/index/index');
-        }
         $this->module = strtolower($request->module());
         $this->contrller = strtolower($request->controller());
         $this->method = strtolower($request->action());
         $this->useModel = ucfirst($this->contrller);
+        $this->checkLogin();
+        $this->checkAuth($request);
     }
 
     public function _empty(){
         cookie("currentUrl",null);
-        echo 456;
+        return view("error/404");
     }
 
-    protected function checkAuth(Request $request){
+    /*
+     * 验证登录
+     * */
+    protected function checkLogin(){
+        $check = false;
+        if(!empty(session('login_id'))){
+            $user = User::get(session('login_id'));
+            if(!empty($user)){
+                $check = true;
+            }else{
+                session('login_id',null);
+                cookie("login_id",null);
+            }
+        }
+        if(!$check) $this->redirect('bs/index/index');
+    }
+
+    /*
+     * 验证权限
+     * */
+    public function checkAuth(Request $request){
         $auth = false;
+        $menus = $this->getMenu(['route']);
+        if((is_object($menus) && $menus->count() >0) || !empty($menus)){
+            $url = strtolower(ltrim($request->baseUrl(),'/'));
+            foreach ($menus as $menu){
+                $route = explode('/',strtolower($menu->route));
+                $menuRoute = current($route)."/".next($route)."/".next($route);
+                if($menuRoute == $url){
+                    $auth = true;
+                }
+            }
+        }
+        if(!$auth) $this->redirect('bs/index/abort');
     }
 
-    public function getMenu($modelname,$choose="default"){
+    /*
+     * 菜单
+     * */
+    protected function getMenu($fields = []){
+        $role = User::where('lid',session('login_id'))->find();
+        if(!empty($role) && !empty($role->role->access)){
+            $model = new Menu();
+            $model = $model->whereIn("id",$role->role->access);
+            if(!empty($fields)){
+                $model = $model->field(explode(',',$fields));
+            }
+            return $model->select();
+        }
+        return null;
+    }
+
+    /*
+     * 页面显示
+     * */
+    public function getOption($modelname,$choose="default"){
         $useModel = "\\app\\common\\model\\".$modelname;
         $model = new $useModel;
         $menus = $model->getCF($choose);
@@ -48,12 +100,16 @@ class Base extends Controller {
         return $result;
     }
 
+    /*
+     * 验证数据
+     * */
     public function checkData(Request $request,$useModel,$choose="default"){
         $rule = [];
         $tipMsg = [];
         $data = [];
-        $menus = $this->getMenu($useModel,$choose);
+        $menus = $this->getOption($useModel,$choose);
         foreach ($menus->{$choose} as $menu){
+            //查找验证规则
             if(isset($request->{$menu->name})){
                 if(!empty($menu->validate)){
                     $rule[$menu->name] = $menu->validate->rule;
@@ -64,6 +120,9 @@ class Base extends Controller {
                         }
                         $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
                     }
+                }
+                if(is_array($request->{$menu->name})){
+                    $request->{$menu->name} = implode(",",$request->{$menu->name});
                 }
                 $data[$menu->name] = filterChar($request->{$menu->name});
             }
@@ -79,37 +138,35 @@ class Base extends Controller {
         return $result;
     }
 
-    public function checkUnique($modelname,$data,$choose="default"){
-        $check = [];
-        $useModel = "\\app\\common\\model\\".$modelname;
-        $model = new $useModel;
-        $menus = $this->getMenu($modelname,$choose);
-        foreach($menus->{$choose} as $menu){
-            if(isset($data[$menu->name])){
-                if(isset($menu->unique) && $menu->unique == true){
-                    $check[] = [$menu->name=>$data[$menu->name]];
-                }
-            }
-        }
-        $res = true;
-        if(!empty($check)){
-            $query = $model->where($check[0]);
-            if(count($check) > 1){
-                unset($check[0]);
-                foreach($check as $val){
-                    $query = $query->whereOr($val);
-                }
-            }
-            $result = $query->find();
-            if(!empty($result)){
-                $res = false;
-            }
-        }
-        return $res;
+    /*
+     * 列表页
+     * */
+    public function index(Request $request){
+        echo 1;
     }
 
-    public function index(Request $request){
-        $menu = $this->getMenu($this->useModel,$this->choose);
+   /*
+    * 添加页
+    * */
+    public function add(Request $request){
+        if($request->isPost()){
+            $result=$this->checkData($request,$this->useModel,$this->choose);
+            if($result['status'] != 200){
+                if(is_array($result['data'])){
+                    $msg = implode('<br/>',$result['data']);
+                }else{
+                    $msg = $result['data'];
+                }
+                $this->error($msg);
+            }
+            $modelname = "\\app\\common\\model\\".$this->useModel;
+            $model = new $modelname;
+            $result['data']['create_by'] = session("login_id");
+            $result['data']['update_by'] = session("login_id");
+            $model->save($result['data']);
+            $this->success('新加成功',null,'',1);
+        }
+        $menu = $this->getOption($this->useModel,$this->choose);
         return view(strtolower($request->action()),['menus'=>$menu->{$this->choose}]);
     }
 }
