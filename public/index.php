@@ -12,6 +12,9 @@
 // [ 应用入口文件 ]
 namespace think;
 
+//定义常量
+define("EXECUTE_TIME",microtime(true));
+
 // 加载基础文件
 require __DIR__ . '/../thinkphp/base.php';
 

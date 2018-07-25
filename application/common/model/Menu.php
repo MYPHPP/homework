@@ -2,6 +2,50 @@
 namespace app\common\model;
 
 class Menu extends Base {
+
+
+    /*
+     *登录用户权限菜单
+     * */
+    static public function getUserMenu($fields = []){
+        $role = User::where('lid',session('login_id'))->find();
+        if(!empty($role) && !empty($role->role->access)){
+            $model = new Menu();
+            $model = $model->whereIn("id",$role->role->access);
+            if(!empty($fields)){
+                if(is_array($fields)){
+                    $model = $model->field(explode(',',$fields));
+                }
+                if(is_string($fields)){
+                    $model = $model->field($fields);
+                }
+            }
+            return $model->order('sort',"asc")->select();
+        }
+        return null;
+    }
+
+    /*
+     * 后台logo对应的链接
+     * */
+    static public function getLogoLink(){
+        $route = '';
+        $menus = self::getUserMenu('route')->toArray();
+        $menus = array_column($menus,'route');
+        if(in_array("bs/common/dashboard",$menus)){
+            $route = "bs/common/dashboard";
+        }else{
+            foreach ($menus as $menu){
+                $num = strpos($menu,"index");
+                if(isset($num)){
+                    $route = $menu;
+                    break;
+                }
+            }
+        }
+        return $route;
+    }
+
     public function setDescriptionAttr($value){
         return htmlentities($value);
     }
@@ -25,37 +69,10 @@ class Menu extends Base {
          return $arr;
     }
 
-    /*
-     *登录用户权限菜单
-     * */
-    static public function getUserMenu($fields = []){
-        $role = User::where('lid',session('login_id'))->find();
-        if(!empty($role) && !empty($role->role->access)){
-            $model = new Menu();
-            $model = $model->whereIn("id",$role->role->access);
-            if(!empty($fields)){
-                if(is_array($fields)){
-                    $model = $model->field(explode(',',$fields));
-                }
-                if(is_string($fields)){
-                    $model = $model->field($fields);
-                }
-            }
-            return $model->order('sort',"asc")->select();
-        }
-        return null;
-    }
-
     public function getCF($menu='default'){
         return [
             'pagesize' => [10,20,30],//设置页面每页显示条数
             'default' => [
-                'route' => [
-                    "label" => "路由名称",
-                    "type" => "text",
-                    'placeholder' => '请填写路由',
-                    "size" => 3
-                ],
                 "title" => [
                     "label" => "菜单名称",
                     "type" => "text",
@@ -82,7 +99,7 @@ class Menu extends Base {
                     "required" => true,
                     "data" => [0=>["label"=>'男',"checked"=>true],1=>["label"=>"女"]]
                 ],
-                'action' => [
+                'route' => [
                     "label" => "路由地址",
                     "type" => "text",
                     'placeholder' => '请填写路由',

@@ -18,13 +18,15 @@ class Base extends Controller {
 
     public function __construct(Request $request)
     {
+        parent::__construct();
         cookie("currentUrl",$request->url());
         $this->module = strtolower($request->module());
         $this->contrller = strtolower($request->controller());
         $this->method = strtolower($request->action());
         $this->useModel = ucfirst($this->contrller);
         $this->checkLogin();
-        $this->checkAuth($request);
+        $this->checkAuth();
+        $this->assign("logoLink",Menu::getLogoLink());
     }
 
     /*
@@ -46,10 +48,11 @@ class Base extends Controller {
     /*
      * 验证权限
      * */
-    public function checkAuth(Request $request){
+    public function checkAuth(){
         $model = new User();
         $url = $this->module."/".$this->contrller."/".$this->method;
         if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
+        $this->assign("loginInfo",$model->getLoginInfo());
     }
 
     /*
@@ -107,6 +110,16 @@ class Base extends Controller {
     }
 
     /*
+     * 页面模板
+     * */
+    public function show($action,&$arr=[]){
+        $executetime = microtime(true) - EXECUTE_TIME;
+        $executetime = round($executetime,3);
+        $arr['execute_time'] = $executetime;
+        return view(strtolower($action),$arr);
+    }
+
+    /*
      * 列表页
      * */
     public function index(Request $request){
@@ -142,6 +155,7 @@ class Base extends Controller {
             $this->success('新加成功',null,'',1);
         }
         $menu = $this->getOption($this->useModel,$this->choose);
-        return view(strtolower($request->action()),['menus'=>$menu->{$this->choose}]);
+        $data = ['menus'=>$menu->{$this->choose}];
+        return $this->show(strtolower($request->action()),$data);
     }
 }

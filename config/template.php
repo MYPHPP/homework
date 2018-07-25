@@ -32,4 +32,8 @@ return [
     'taglib_begin' => '{',
     // 标签库标签结束标记
     'taglib_end'   => '}',
+    //设置模板全局替换
+    'tpl_replace_string' => [
+        '__PUBLIC__'=> '../../'
+    ]
 ];

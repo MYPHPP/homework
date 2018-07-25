@@ -33,8 +33,7 @@ class Index extends Controller{
     public function index(Request $request){
         $model = new User;
         if($model->checkLogin()){
-            return redirect("bs/menu/add?a=11&b=2");
-            //return redirect($this->loginJump());
+            return redirect($this->loginJump());
         }
         if($request->isPost()){
             if(empty($request->name) || empty($request->passwd)){
@@ -154,9 +153,13 @@ class Index extends Controller{
      * */
     public function loginJump(){
         $url = 'bs/index/abort';
-        $menus = Menu::getUserMenu("route");
-        if(!empty($menus) && $menus->count() > 0){
-            $url = $this->chooseUrl($menus);
+        if(empty(cookie('currentUrl'))){
+            $menus = Menu::getUserMenu("route");
+            if(!empty($menus) && $menus->count() > 0){
+                $url = $this->chooseUrl($menus);
+            }
+        }else{
+            $url = cookie('currentUrl');
         }
         return $url;
     }

@@ -61,11 +61,22 @@ class User extends Model{
                 $route = explode('/',strtolower($menu->route));
                 $menuRoute = current($route)."/".next($route)."/".next($route);
                 if($menuRoute == $url){
-                    $auth = true;
+                    return true;
                 }
             }
         }
         return $auth;
+    }
+
+    /*
+     * 获取登录用户的信息
+     * */
+    public function getLoginInfo($field=''){
+        $model = $this->where('lid',session('login_id'));
+        if(!empty($field)){
+            $model = $model->field($field);
+        }
+        return $model->find();
     }
 
     /*
