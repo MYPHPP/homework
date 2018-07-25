@@ -27,6 +27,9 @@ class Base extends Controller {
         $this->checkAuth($request);
     }
 
+    /*
+     * 不存在的路由的处理
+     * */
     public function _empty(){
         cookie("currentUrl",null);
         return view("error/404");
@@ -36,52 +39,17 @@ class Base extends Controller {
      * 验证登录
      * */
     protected function checkLogin(){
-        $check = false;
-        if(!empty(session('login_id'))){
-            $user = User::get(session('login_id'));
-            if(!empty($user)){
-                $check = true;
-            }else{
-                session('login_id',null);
-                cookie("login_id",null);
-            }
-        }
-        if(!$check) $this->redirect('bs/index/index');
+        $model = new User();
+        if(!$model->checkLogin()) $this->redirect('bs/index/index');
     }
 
     /*
      * 验证权限
      * */
     public function checkAuth(Request $request){
-        $auth = false;
-        $menus = $this->getMenu(['route']);
-        if((is_object($menus) && $menus->count() >0) || !empty($menus)){
-            $url = strtolower(ltrim($request->baseUrl(),'/'));
-            foreach ($menus as $menu){
-                $route = explode('/',strtolower($menu->route));
-                $menuRoute = current($route)."/".next($route)."/".next($route);
-                if($menuRoute == $url){
-                    $auth = true;
-                }
-            }
-        }
-        if(!$auth) $this->redirect('bs/index/abort');
-    }
-
-    /*
-     * 菜单
-     * */
-    protected function getMenu($fields = []){
-        $role = User::where('lid',session('login_id'))->find();
-        if(!empty($role) && !empty($role->role->access)){
-            $model = new Menu();
-            $model = $model->whereIn("id",$role->role->access);
-            if(!empty($fields)){
-                $model = $model->field(explode(',',$fields));
-            }
-            return $model->select();
-        }
-        return null;
+        $model = new User();
+        $url = $this->module."/".$this->contrller."/".$this->method;
+        if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
     }
 
     /*
@@ -164,6 +132,13 @@ class Base extends Controller {
             $result['data']['create_by'] = session("login_id");
             $result['data']['update_by'] = session("login_id");
             $model->save($result['data']);
+            $role = Role::get(1);
+            if(!empty($role)){
+                $role->access = $role->access.",".$model->id;
+                $role->save();
+            }else{
+                Role::create(['title'=>'超级管理员',"access"=>"1,2,3,4"]);
+            }
             $this->success('新加成功',null,'',1);
         }
         $menu = $this->getOption($this->useModel,$this->choose);

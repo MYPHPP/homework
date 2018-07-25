@@ -31,6 +31,44 @@ class User extends Model{
     }
 
     /*
+     * 验证登录
+     * */
+    public function checkLogin(){
+        $check = false;
+        if(!empty(cookie("login_id") || !empty(session('login_id')))){
+            if(empty(session('login_id'))){
+                session('login_id',cookie("login_id"));
+            }
+            $user = User::get(session('login_id'));
+            if(!empty($user)){
+                $check = true;
+            }else{
+                session('login_id',null);
+                cookie("login_id",null);
+            }
+        }
+        return $check;
+    }
+
+    /*
+     * 验证权限
+     * */
+    public function checkAuth($url){
+        $auth = false;
+        $menus = Menu::getUserMenu('route');
+        if(!empty($menus) && (is_object($menus) && $menus->count() >0)){
+            foreach ($menus as $menu){
+                $route = explode('/',strtolower($menu->route));
+                $menuRoute = current($route)."/".next($route)."/".next($route);
+                if($menuRoute == $url){
+                    $auth = true;
+                }
+            }
+        }
+        return $auth;
+    }
+
+    /*
      * 配置字段相关信息
      * */
     public function getCF($menu='default'){

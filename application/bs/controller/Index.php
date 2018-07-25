@@ -5,28 +5,43 @@ use app\common\model\User;
 use think\Controller;
 use think\Request;
 use think\Validate;
+use app\common\model\Menu;
 
 class Index extends Controller{
     protected $useModel = "User";
     protected $choose = "default";
+
+    /*
+     * 不存在的路由的处理
+     * */
+    public function _empty(){
+        cookie("currentUrl",null);
+        return view("error/404");
+    }
+
+    /*
+     * 权限页面错误跳转
+     * */
+    public function abort($type = 404){
+        cookie("currentUrl",null);
+        return $this->fetch('error/'.$type);
+    }
+
     /*
      * 登录
      * */
     public function index(Request $request){
-        if(!empty(cookie('login_id'))){
-            session('login_id',cookie('login_id'));
-            if(!empty(cookie("currentUrl"))){
-                return redirect(cookie("currentUrl"));
-            }else{
-                return redirect('bs/dashboard/index');
-            }
+        $model = new User;
+        if($model->checkLogin()){
+            return redirect("bs/menu/add?a=11&b=2");
+            //return redirect($this->loginJump());
         }
         if($request->isPost()){
             if(empty($request->name) || empty($request->passwd)){
                 $this->error("信息填写不完整");
             }
             $request->name = filterChar($request->name);
-            $user = User::where(['name'=>$request->name])->field('lid,name,passwd')->find();
+            $user = $model->where(['name'=>$request->name])->field('lid,name,passwd')->find();
             if(!empty($user)){
                 if(!empty($user['passwd']) && $user['passwd'] == $request->passwd){
                     session('login_id',$user['lid']);
@@ -36,7 +51,7 @@ class Index extends Controller{
                     if(!empty(cookie("currentUrl"))){
                         return redirect(cookie("currentUrl"));
                     }else{
-                        return redirect('bs/dashboard/index');
+                        return redirect($this->loginJump());
                     }
                 }else{
                     $this->error('账号或密码错误');
@@ -48,6 +63,15 @@ class Index extends Controller{
         $menu = $this->getMenu($this->useModel,$this->choose);
         $this->assign('menus',$menu->{$this->choose});
         return $this->fetch('login');
+    }
+
+    /*
+     * 退出
+     * */
+    public function logout(){
+        session(null);
+        cookie(null);
+        return redirect('bs/index/index');
     }
 
     /*
@@ -125,7 +149,26 @@ class Index extends Controller{
         return $result;
     }
 
-    public function abort($type = 404){
-        return $this->fetch('error/'.$type);
+    /*
+     * 登录成功页面跳转
+     * */
+    public function loginJump(){
+        $url = 'bs/index/abort';
+        $menus = Menu::getUserMenu("route");
+        if(!empty($menus) && $menus->count() > 0){
+            $url = $this->chooseUrl($menus);
+        }
+        return $url;
+    }
+
+    public function chooseUrl($route){
+        if(!empty($route) && $route->count() > 0){
+            foreach($route as $r){
+                if(!empty($r->route)){
+                    return $r->route;
+                }
+            }
+        }
+        return '';
     }
 }

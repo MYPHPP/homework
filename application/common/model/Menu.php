@@ -7,7 +7,7 @@ class Menu extends Base {
     }
 
     /*
-     * 获取上级目录
+     * 获取目录
      * */
     protected function getMenu($pid=0,$arr=array(),$level=0){
         $menus = $this->where("pid",$pid)->field("id,title")->select();
@@ -23,6 +23,27 @@ class Menu extends Base {
              }
          }
          return $arr;
+    }
+
+    /*
+     *登录用户权限菜单
+     * */
+    static public function getUserMenu($fields = []){
+        $role = User::where('lid',session('login_id'))->find();
+        if(!empty($role) && !empty($role->role->access)){
+            $model = new Menu();
+            $model = $model->whereIn("id",$role->role->access);
+            if(!empty($fields)){
+                if(is_array($fields)){
+                    $model = $model->field(explode(',',$fields));
+                }
+                if(is_string($fields)){
+                    $model = $model->field($fields);
+                }
+            }
+            return $model->order('sort',"asc")->select();
+        }
+        return null;
     }
 
     public function getCF($menu='default'){
