@@ -53,7 +53,7 @@ class Menu extends Base {
         $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->select()->toArray();
         if(!empty($menus)){
             foreach($menus as $k=>$v){
-                $child = $this->getMenuByIds($v['id']);
+                $child = $this->getMenuByIds($ids,$v['id']);
                 if(!empty($child)){
                     $menus[$k]['child'] = $child;
                 }

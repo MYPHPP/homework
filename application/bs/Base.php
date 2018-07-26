@@ -55,7 +55,6 @@ class Base extends Controller {
         $userinfo = $model->getLoginInfo();
         if(!empty($userinfo->role->access)){
             $userinfo->nav_menus = (new Menu())->getMenuByIds($userinfo->role->access);
-            dd($userinfo->nav_menus);
         }
         $this->assign("loginInfo",$userinfo);
     }
