@@ -43,3 +43,46 @@ function filterChar($val){
     }
     return $val;
 }
+
+function curlSend($url,$data='',$type="get"){
+    $type = strtolower($type);
+    $result = false;
+    if(empty($url)){return $result;}
+    try{
+        $curl = curl_init();//初始化
+        curl_setopt($curl, CURLOPT_URL, $url);//设置抓取的url
+        curl_setopt($curl, CURLOPT_HEADER, 0);//设置头文件的信息作为数据流输出
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);//设置获取的信息以文件流的形式返回，而不是直接输出。
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//绕过ssl验证
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);// 不从证书中检查SSL加密算法是否存在
+        if($type != "get"){
+            if(empty($data)){
+                curl_close($curl);
+                return $result;
+            }
+            curl_setopt($curl, CURLOPT_POST, 1);// 设置请求方式为post
+            if($type == "json"){
+                $data = json_encode($data);
+            }else{
+                $data = http_build_query($data);
+            }
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);// 提交数据
+            if($type == "json"){
+                curl_setopt($curl, CURLOPT_HTTPHEADER,
+                    array(
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($data)
+                    )
+                );//设置header头
+            }
+        }
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);//在尝试连接时等待的秒数。设置为0，则无限等待。
+        curl_setopt($curl, CURLOPT_TIMEOUT, 60);//设置超时时间
+        $result = curl_exec($curl);//执行命令
+        dd(curl_getinfo($curl));
+        curl_close($curl);//关闭句柄
+    }catch (Exception $e){
+        return $e->getMessage();
+    }
+    return $result;
+}

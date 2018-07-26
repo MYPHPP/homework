@@ -46,6 +46,35 @@ class Menu extends Base {
         return $route;
     }
 
+    /*
+     * 根据id获取相应的菜单
+     * */
+    public function getMenuByIds($ids,$pid=0){
+        $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->select()->toArray();
+        if(!empty($menus)){
+            foreach($menus as $k=>$v){
+                $child = $this->getMenuByIds($v['id']);
+                if(!empty($child)){
+                    $menus[$k]['child'] = $child;
+                }
+            }
+        }
+        return $menus;
+    }
+
+    public function build_tree($ids,$root_id=0){
+        $childs=Menu::whereIn('id',$ids)->where('pid',$root_id)->select()->toArray();
+        if(!empty($childs)){
+            foreach ($childs as $k => $v){
+                $rescurTree=$this->build_tree($ids,$v['id']);
+                if( null != $rescurTree){
+                    $childs[$k]['childs']=$rescurTree;
+                }
+            }
+        }
+        return $childs;
+    }
+
     public function setDescriptionAttr($value){
         return htmlentities($value);
     }

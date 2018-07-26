@@ -52,7 +52,12 @@ class Base extends Controller {
         $model = new User();
         $url = $this->module."/".$this->contrller."/".$this->method;
         if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
-        $this->assign("loginInfo",$model->getLoginInfo());
+        $userinfo = $model->getLoginInfo();
+        if(!empty($userinfo->role->access)){
+            $userinfo->nav_menus = (new Menu())->getMenuByIds($userinfo->role->access);
+            dd($userinfo->nav_menus);
+        }
+        $this->assign("loginInfo",$userinfo);
     }
 
     /*
