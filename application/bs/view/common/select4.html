@@ -1,13 +1,13 @@
 <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
     <div class="form-group">
-        <label>{$menus->$template->label}</label>
+        <label>{$menus->$template->label}{if !empty($menus->$template->required)} <span style="color:firebrick">*</span>{/if} :</label>
         <select id="{$menus->$template->name}" class="form-control" name="{$menus->$template->name}" multiple>
             <option value="">请选择</option>
             {php}
             if(!empty($menus->$template->data)){
-            foreach($menus->$template->data as $menu){
+            foreach($menus->$template->data as $key=>$value){
             {/php}
-            <option value="{$menu->id}">{$menu->title}</option>
+            <option value="{$key}">{$value}</option>
             {php}
             }}
             {/php}

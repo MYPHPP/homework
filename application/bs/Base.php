@@ -53,10 +53,8 @@ class Base extends Controller {
         $url = $this->module."/".$this->contrller."/".$this->method;
         if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
         $userinfo = $model->getLoginInfo();
-        if(!empty($userinfo->role->access)){
-            $userinfo->nav_menus = (new Menu())->getMenuByIds($userinfo->role->access);
-        }
         $this->assign("loginInfo",$userinfo);
+        $this->assign("nav",(new Menu())->getNav($userinfo->role->access));
     }
 
     /*

@@ -49,30 +49,56 @@ class Menu extends Base {
     /*
      * 根据id获取相应的菜单
      * */
-    public function getMenuByIds($ids,$pid=0){
-        $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->select()->toArray();
-        if(!empty($menus)){
-            foreach($menus as $k=>$v){
-                $child = $this->getMenuByIds($ids,$v['id']);
-                if(!empty($child)){
-                    $menus[$k]['child'] = $child;
+    public function getMenuById($ids,$pid=0,$level=2){
+        if($level > 0){
+            $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort")->select()->toArray();
+            if(!empty($menus)){
+                foreach($menus as $k=>$v){
+                    $child = $this->getMenuByIds($ids,$v['id'],$level-1);
+                    if(!empty($child)){
+                        $menus[$k]['child'] = $child;
+                    }
                 }
             }
+            return $menus;
         }
-        return $menus;
     }
 
-    public function build_tree($ids,$root_id=0){
-        $childs=Menu::whereIn('id',$ids)->where('pid',$root_id)->select()->toArray();
-        if(!empty($childs)){
-            foreach ($childs as $k => $v){
-                $rescurTree=$this->build_tree($ids,$v['id']);
-                if( null != $rescurTree){
-                    $childs[$k]['childs']=$rescurTree;
-                }
+    public function getNav($ids,$pid=0,$level=0){
+        $html = '';
+        $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort")->select()->toArray();
+        if(!empty($menus)){
+            foreach($menus as $v){
+                $route = !empty($v['route']) ? url($v['route']) : "javascript:;";
+                $icon = isset($v['icon']) ? '<i class="'.$v['icon'].'"></i>' : '';
+                $left = empty($v['route']) ? '<i class="right fa fa-angle-left"></i>' : '';
+                $html .= '<li  class="nav-item has-treeview"><a class="nav-link" href="'.$route.'">'.$icon.'<p>'.$v['title'].$left.'</p></a>';
+                $html .= $this->getNav($ids,$v['id'],$level+1);
+                $html .= "</li>";
             }
         }
-        return $childs;
+        if(!empty($html)){
+            if($level == 0){
+                $html = '<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">'.$html."</ul>";
+            }else{
+                $html = '<ul class="nav nav-treeview">'.$html."</ul>";
+            }
+        }
+        return $html ;
+    }
+
+    public function getMenuByIds($menus,$pid=0){
+            $html='';
+            if(!empty($menus)){
+                foreach($menus as $k=>$v){
+                    if($v['pid'] == $pid){
+                        $html .= "<li>".$v['title'];
+                        $html .= $this->getMenuByIds($menus, $v['id']);
+                        $html = $html."</li>";
+                    }
+                }
+            }
+            return $html ? '<ul>'.$html.'</ul>' : $html ;
     }
 
     public function setDescriptionAttr($value){
@@ -82,17 +108,17 @@ class Menu extends Base {
     /*
      * 获取目录
      * */
-    protected function getMenu($pid=0,$arr=array(),$level=0){
-        $menus = $this->where("pid",$pid)->field("id,title")->select();
+    public function getMenu($pid=0,$arr=array(),$level=0){
+        $menus = $this->where("pid",$pid)->field("id,title")->order('sort')->select()->toArray();
          if(!empty($menus)){
              foreach ($menus as $k=>$v){
                  $prefix = '';
                  for($i=1;$i<=$level;$i++){
                      $prefix .= "|-";
                  }
-                 $v->title = $prefix.$v->title;
+                 $v['title'] = $prefix.$v['title'];
                  $arr[] = $v;
-                 $arr = $this->getMenu($v->id,$arr,$level+1);
+                 $arr = $this->getMenu($v['id'],$arr,$level+1);
              }
          }
          return $arr;
@@ -120,13 +146,13 @@ class Menu extends Base {
                 'pid' => [
                     "label" => "上级菜单",
                     "type" => "select2",
-                    "data" => $this->getMenu()
+                    "data" => array_column($this->getMenu(),'title','id')
                 ],
                 "sort" => [
                     "label" => "单选",
                     "type" => 'radio',
                     "required" => true,
-                    "data" => [0=>["label"=>'男',"checked"=>true],1=>["label"=>"女"]]
+                    "data" => config('setting.menu.sex')
                 ],
                 'route' => [
                     "label" => "路由地址",
@@ -134,6 +160,13 @@ class Menu extends Base {
                     'placeholder' => '请填写路由',
                     'tip' => "路由地址格式：模块/控制器/方法，例：bs/index/index"
                 ],
+                "position" => [
+                    "label" => "展示位置",
+                    "type" => "select",
+                    'placeholder' => '请选择展示位置',
+                    "required" => true,
+                    "data" => config("setting.menu.position")
+                ]
             ],
         ];
     }
