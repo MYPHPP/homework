@@ -15,6 +15,7 @@ class Base extends Controller {
     protected $contrller;
     protected $useModel;
     protected $choose = "default";
+    protected $loginUserinfo;
 
     public function __construct(Request $request)
     {
@@ -53,8 +54,8 @@ class Base extends Controller {
         $url = $this->module."/".$this->contrller."/".$this->method;
         if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
         $userinfo = $model->getLoginInfo();
+        $this->loginUserinfo = $userinfo;
         $this->assign("loginInfo",$userinfo);
-        $this->assign("nav",(new Menu())->getNav($userinfo->role->access));
     }
 
     /*
@@ -114,18 +115,27 @@ class Base extends Controller {
     /*
      * 页面模板
      * */
-    public function show($action,&$arr=[]){
+    public function show($action,$usemodel='',$choose=''){
         $executetime = microtime(true) - EXECUTE_TIME;
         $executetime = round($executetime,3);
-        $arr['execute_time'] = $executetime;
-        return view(strtolower($action),$arr);
+        $usemodel = !empty($usemodel) ? $usemodel : $this->useModel;
+        $choose = !empty($choose) ? $choose : $this->choose;
+        $menu = $this->getOption($usemodel,$choose);
+        $data['execute_time'] = $executetime;
+        $data['menus'] = $menu->{$choose};
+        $menuModel = new Menu();
+        $url = $this->module."/".$this->contrller."/".$this->method;
+        $menuid = $menuModel->where("route","like",$url.'%')->value('id');
+        $pids = $menuModel->getPids($menuid);
+        $this->assign("nav",$menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));
+        return view(strtolower($action),$data);
     }
 
     /*
      * 列表页
      * */
     public function index(Request $request){
-        echo 1;
+        return $this->show(strtolower($request->action()));
     }
 
    /*
@@ -156,8 +166,6 @@ class Base extends Controller {
             }
             $this->success('新加成功',null,'',1);
         }
-        $menu = $this->getOption($this->useModel,$this->choose);
-        $data = ['menus'=>$menu->{$this->choose}];
-        return $this->show(strtolower($request->action()),$data);
+        return $this->show(strtolower($request->action()));
     }
 }

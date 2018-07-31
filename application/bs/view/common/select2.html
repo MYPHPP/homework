@@ -1,8 +1,8 @@
 <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
     <div class="form-group">
         <label>{$menus->$template->label}{if !empty($menus->$template->required)} <span style="color:firebrick">*</span>{/if} :</label>
-        <select id="{$menus->$template->name}" class="form-control select2" style="width: 100%;" name="{$menus->$template->name}">
-            <option value="0">顶级菜单</option>
+        <select id="{$menus->$template->name}" class="form-control select2" style="width: 100%;" name="{$menus->$template->name}" {if !empty($menus->$template->required)}required{/if}>
+            <option value="">请选择</option>
             {php}
                 if(!empty($menus->$template->data)){
                 foreach($menus->$template->data as $key=>$value){

@@ -3,7 +3,6 @@ namespace app\common\model;
 
 class Menu extends Base {
 
-
     /*
      *登录用户权限菜单
      * */
@@ -64,16 +63,29 @@ class Menu extends Base {
         }
     }
 
-    public function getNav($ids,$pid=0,$level=0){
+    public function getPids($id,$pids=[]){
+        $pid = $this->where('id',$id)->value('pid');
+        if(isset($pid) && $pid != 0){
+            $pids[] = $pid;
+            $pids = $this->getPids($pid,$pids);
+        }
+        return $pids;
+    }
+
+    public function getNav($ids,$pidArr,$visit,$pid=0,$level=0){
         $html = '';
         $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort")->select()->toArray();
         if(!empty($menus)){
             foreach($menus as $v){
                 $route = !empty($v['route']) ? url($v['route']) : "javascript:;";
-                $icon = isset($v['icon']) ? '<i class="'.$v['icon'].'"></i>' : '';
-                $left = empty($v['route']) ? '<i class="right fa fa-angle-left"></i>' : '';
-                $html .= '<li  class="nav-item has-treeview"><a class="nav-link" href="'.$route.'">'.$icon.'<p>'.$v['title'].$left.'</p></a>';
-                $html .= $this->getNav($ids,$v['id'],$level+1);
+                $icon = isset($v['icon']) ? '<i class="nav-icon '.$v['icon'].'"></i>' : '';
+                $left = empty($v['route']) || $this->where('pid',$v['id'])->select()->count() > 0 ? '<i class="right fa fa-angle-left"></i>' : '';
+                $routeArr = explode('/',strtolower($v['route']));
+                $menuRoute = current($routeArr)."/".next($routeArr)."/".next($routeArr);
+                $open = in_array($v['id'],$pidArr) ? "menu-open" : '';
+                $active = in_array($v['id'],$pidArr) || $menuRoute == $visit  ? "active" : '';
+                $html .= '<li  class="nav-item has-treeview '.$open.'"><a class="nav-link '.$active.'" href="'.$route.'">'.$icon.'<p>'.$v['title'].$left.'</p></a>';
+                $html .= $this->getNav($ids,$pidArr,$visit,$v['id'],$level+1);
                 $html .= "</li>";
             }
         }
@@ -84,7 +96,7 @@ class Menu extends Base {
                 $html = '<ul class="nav nav-treeview">'.$html."</ul>";
             }
         }
-        return $html ;
+        return $html;
     }
 
     public function getMenuByIds($menus,$pid=0){
@@ -166,6 +178,11 @@ class Menu extends Base {
                     'placeholder' => '请选择展示位置',
                     "required" => true,
                     "data" => config("setting.menu.position")
+                ],
+                "icon" => [
+                    "label" => "图标",
+                    "type" => "select2",
+                    "data" => config("setting.menu.icon")
                 ]
             ],
         ];
