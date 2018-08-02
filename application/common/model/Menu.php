@@ -31,12 +31,12 @@ class Menu extends Base {
         $route = '';
         $menus = self::getUserMenu('route')->toArray();
         $menus = array_column($menus,'route');
-        if(in_array("bs/common/dashboard",$menus)){
-            $route = "bs/common/dashboard";
-        }else{
-            foreach ($menus as $menu){
-                $num = strpos($menu,"index");
-                if(isset($num)){
+        foreach ($menus as $menu){
+            $marr = explode("/",$menu);
+            if(count($marr) > 2){
+                current($marr);
+                next($marr);
+                if(strtolower(next($marr)) == "index"){
                     $route = $menu;
                     break;
                 }
@@ -63,6 +63,9 @@ class Menu extends Base {
         }
     }
 
+    /*
+     * 查找某个菜单的所有父级菜单ID
+     * */
     public function getPids($id,$pids=[]){
         $pid = $this->where('id',$id)->value('pid');
         if(isset($pid) && $pid != 0){
@@ -72,33 +75,40 @@ class Menu extends Base {
         return $pids;
     }
 
+    /*
+     * 左侧菜单栏
+     * */
     public function getNav($ids,$pidArr,$visit,$pid=0,$level=0){
         $html = '';
         $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort")->select()->toArray();
         if(!empty($menus)){
             foreach($menus as $v){
                 $route = !empty($v['route']) ? url($v['route']) : "javascript:;";
-                $icon = isset($v['icon']) ? '<i class="nav-icon '.$v['icon'].'"></i>' : '';
-                $left = empty($v['route']) || $this->where('pid',$v['id'])->select()->count() > 0 ? '<i class="right fa fa-angle-left"></i>' : '';
+                $icon = isset($v['icon']) ? '<i class="'.$v['icon'].'"></i>' : '';
                 $routeArr = explode('/',strtolower($v['route']));
                 $menuRoute = current($routeArr)."/".next($routeArr)."/".next($routeArr);
-                $open = in_array($v['id'],$pidArr) ? "menu-open" : '';
                 $active = in_array($v['id'],$pidArr) || $menuRoute == $visit  ? "active" : '';
-                $html .= '<li  class="nav-item has-treeview '.$open.'"><a class="nav-link '.$active.'" href="'.$route.'">'.$icon.'<p>'.$v['title'].$left.'</p></a>';
+                //$open = in_array($v['id'],$pidArr) ? "open" : '';
+                $open = $active == "active" ? "arrow open" : 'arrow ';
+                $left = empty($v['route']) || $this->where('pid',$v['id'])->where("position",1)->select()->count() > 0 ? '<span class="'.$open.' "></span>' : '<span class="selected">';
+                $html .= '<li class="'.$active.'"><a href="'.$route.'">'.$icon.'<sapn class="title">'.$v['title'].'</sapn>'.$left.'</a>';
                 $html .= $this->getNav($ids,$pidArr,$visit,$v['id'],$level+1);
                 $html .= "</li>";
             }
         }
         if(!empty($html)){
             if($level == 0){
-                $html = '<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">'.$html."</ul>";
+                $html = '<ul class="page-sidebar-menu"><li><div class="sidebar-toggler hidden-phone"></div></li>'.$html."</ul>";
             }else{
-                $html = '<ul class="nav nav-treeview">'.$html."</ul>";
+                $html = '<ul class="sub-menu">'.$html."</ul>";
             }
+            return $html;
         }
-        return $html;
     }
 
+    /*
+     * 查找所有菜单
+     * */
     public function getMenuByIds($menus,$pid=0){
             $html='';
             if(!empty($menus)){
@@ -113,6 +123,35 @@ class Menu extends Base {
             return $html ? '<ul>'.$html.'</ul>' : $html ;
     }
 
+    /*
+     * 内容导航栏
+     * */
+    public function getTab($pids,$menuid){
+        $html = '';
+        $h3 = '';
+        $currentMenu = $this->where('id',$menuid)->field('route,title,icon')->find();
+        if(!empty($pids)){
+            sort($pids);
+            foreach($pids as $key=>$pid){
+                $menu = $this->where('id',$pid)->field('route,icon,title')->find();
+                if($key == 0){
+                    $h3 = $menu['title'];
+                }
+                $childs = $this->where('pid',$pid)->select()->count();
+                $icon = !empty($menu['icon']) && $key == 0 ? '<i class="'.$menu['icon'].'"></i>' : "";
+                $right = $childs > 0 ? '<i class="icon-angle-right"></i>' : "";
+                $href = !empty($menu['route']) ? url($menu['route']) : "javascript:;";
+                $html .= '<li>'.$icon.'<a href="'.$href.'">'.$menu['title'].'</a>'.$right.'</li>';
+            }
+            $html .= '<li><a href="'.url($currentMenu['route']).'">'.$currentMenu['title'].'</a></li>';
+        }else{
+            $h3 = $currentMenu['title'];
+            $icon = !empty($currentMenu['icon']) ? '<i class="'.$currentMenu['icon'].'"></i>' : "";
+            $html .= '<li>'.$icon.'<a href="'.url($currentMenu['route']).'">'.$currentMenu['title'].'</a></li>';
+        }
+        return ['html'=>$html,'h3'=>$h3];
+    }
+
     public function setDescriptionAttr($value){
         return htmlentities($value);
     }
@@ -124,13 +163,15 @@ class Menu extends Base {
         $menus = $this->where("pid",$pid)->field("id,title")->order('sort')->select()->toArray();
          if(!empty($menus)){
              foreach ($menus as $k=>$v){
-                 $prefix = '';
-                 for($i=1;$i<=$level;$i++){
-                     $prefix .= "|-";
+                 if(!empty($v['title'])){
+                     $prefix = '';
+                     for($i=1;$i<=$level;$i++){
+                         $prefix .= "|-";
+                     }
+                     $v['title'] = $prefix.$v['title'];
+                     $arr[] = $v;
+                     $arr = $this->getMenu($v['id'],$arr,$level+1);
                  }
-                 $v['title'] = $prefix.$v['title'];
-                 $arr[] = $v;
-                 $arr = $this->getMenu($v['id'],$arr,$level+1);
              }
          }
          return $arr;
@@ -181,7 +222,7 @@ class Menu extends Base {
                 ],
                 "icon" => [
                     "label" => "图标",
-                    "type" => "select2",
+                    "type" => "select3",
                     "data" => config("setting.menu.icon")
                 ]
             ],

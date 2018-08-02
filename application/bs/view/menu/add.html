@@ -1,11 +1,14 @@
 {extend name="app" /}
 {block name="content"}
-<form action="" method="post">
-{include file="common/base" temp="pid,position,icon,title,route,description"}
-<div>
-    <input type="submit" class="btn btn-block btn-primary btn-lg" value="提交">
+<div class="portlet-body form">
+    <form action="" class="horizontal-form" method="post">
+        {include file="common/base" temp="pid,position,icon,title,route,description"}
+        <div class="form-actions">
+            <button type="submit" class="btn blue"><i class="icon-ok"></i> 提交</button>
+            <button type="button" class="btn">Cancel</button>
+        </div>
+    </form>
 </div>
-</form>
 {/block}
 {block name="footjs"}
 {load href="/js/menu.js" /}

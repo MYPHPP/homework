@@ -1,20 +1,22 @@
-<div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
-    <div class="form-group">
+<div class="span{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
+    <div class="control-group">
         <div>
-            <label>
+            <label class="control-label">
                 {$menus->$template->label}
                 {if (isset($menus->$template->required)) AND ($menus->$template->required == true)}<span style="color:firebrick;size: 14px;"><b> * </b></span>{/if}：
             </label>
         </div>
-        {php}
-        if(!empty($menus->$template->data)){
-        foreach($menus->$template->data as $d=>$r){
+        <div class="controls">
+            {php}
+            if(!empty($menus->$template->data)){
+            foreach($menus->$template->data as $d=>$r){
             {/php}
-            <label>
-                {$r->label}&nbsp;&nbsp;<input id="{$menus->$template->name}" type="radio" name="{$menus->$template->name}" class="minimal" value="{$d}" {if isset($r->checked)&& $r->checked == true}checked{/if} {if isset($menus->$template->required)&&$menus->$template->required == true} required{/if}>
+            <label class="radio">
+                {$r->label}&nbsp;&nbsp;<input id="{$menus->$template->name}" type="radio" name="{$menus->$template->name}" value="{$d}" {if isset($r->checked)&& $r->checked == true}checked{/if} {if isset($menus->$template->required)&&$menus->$template->required == true} required{/if}>
             </label>&nbsp;&nbsp;&nbsp;&nbsp;
             {php}
             } }
-        {/php}
+            {/php}
+        </div>
     </div>
 </div>

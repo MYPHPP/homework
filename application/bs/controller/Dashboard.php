@@ -5,11 +5,13 @@ use app\bs\Base;
 use think\Request;
 
 class Dashboard extends Base{
-    public function index(Request $request){
-        dd(cookie('currentUrl'));
+    public function index(Request $request)
+    {
+        return $this->show();
     }
 
-    public function test(){
-
+    public function getOptionMenu($usemodel='',$choose='')
+    {
+        return '';
     }
 }

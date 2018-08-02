@@ -15,7 +15,7 @@ class Index extends Controller{
      * 不存在的路由的处理
      * */
     public function _empty(){
-        cookie("currentUrl",null);
+        cookie("ms_currentUrl",null);
         return view("error/404");
     }
 
@@ -23,7 +23,7 @@ class Index extends Controller{
      * 权限页面错误跳转
      * */
     public function abort($type = 404){
-        cookie("currentUrl",null);
+        cookie("ms_currentUrl",null);
         return $this->fetch('error/'.$type);
     }
 
@@ -45,10 +45,10 @@ class Index extends Controller{
                 if(!empty($user['passwd']) && $user['passwd'] == $request->passwd){
                     session('login_id',$user['lid']);
                     if(!empty($request->remember)){
-                        cookie("login_id",$user['lid'],7*86400);
+                        cookie("ms_login_id",$user['lid'],7*86400);
                     }
-                    if(!empty(cookie("currentUrl"))){
-                        return redirect(cookie("currentUrl"));
+                    if(!empty(cookie("ms_currentUrl"))){
+                        return redirect(cookie("ms_currentUrl"));
                     }else{
                         return redirect($this->loginJump());
                     }
@@ -69,7 +69,7 @@ class Index extends Controller{
      * */
     public function logout(){
         session(null);
-        cookie(null);
+        cookie(null,"ms_");
         return redirect('bs/index/index');
     }
 

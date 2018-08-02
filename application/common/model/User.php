@@ -35,9 +35,9 @@ class User extends Model{
      * */
     public function checkLogin(){
         $check = false;
-        if(!empty(cookie("login_id") || !empty(session('login_id')))){
+        if(!empty(cookie("ms_login_id") || !empty(session('login_id')))){
             if(empty(session('login_id'))){
-                session('login_id',cookie("login_id"));
+                session('login_id',cookie("ms_login_id"));
             }
             $user = User::get(session('login_id'));
             if(!empty($user)){

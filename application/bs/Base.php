@@ -20,7 +20,7 @@ class Base extends Controller {
     public function __construct(Request $request)
     {
         parent::__construct();
-        cookie("currentUrl",$request->url());
+        cookie("ms_currentUrl",$request->url());
         $this->module = strtolower($request->module());
         $this->contrller = strtolower($request->controller());
         $this->method = strtolower($request->action());
@@ -34,7 +34,7 @@ class Base extends Controller {
      * 不存在的路由的处理
      * */
     public function _empty(){
-        cookie("currentUrl",null);
+        cookie("ms_currentUrl",null);
         return view("error/404");
     }
 
@@ -55,7 +55,24 @@ class Base extends Controller {
         if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
         $userinfo = $model->getLoginInfo();
         $this->loginUserinfo = $userinfo;
-        $this->assign("loginInfo",$userinfo);
+        $this->assign("loginInfo",$userinfo);//登录用户信息
+        $menuModel = new Menu();
+        $menuid = $menuModel->where("route","like",$url.'%')->value('id');
+        $pids = $menuModel->getPids($menuid);
+        $this->assign("nav",$menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));//左侧菜单
+        $menus = $this->getOptionMenu();
+        $this->assign('menus',$menus);
+        $this->assign('tab',$menuModel->getTab($pids,$menuid));//内容导航栏
+    }
+
+    /*
+     * 内容页配置
+     * */
+    public function getOptionMenu($usemodel='',$choose=''){
+        $usemodel = !empty($usemodel) ? $usemodel : $this->useModel;
+        $choose = !empty($choose) ? $choose : $this->choose;
+        $menu = $this->getOption($usemodel,$choose);
+        return $menu->{$choose};
     }
 
     /*
@@ -115,19 +132,11 @@ class Base extends Controller {
     /*
      * 页面模板
      * */
-    public function show($action,$usemodel='',$choose=''){
+    public function show($action='',$data=[]){
+        $action = !empty($action) ? $action : $this->method;
         $executetime = microtime(true) - EXECUTE_TIME;
         $executetime = round($executetime,3);
-        $usemodel = !empty($usemodel) ? $usemodel : $this->useModel;
-        $choose = !empty($choose) ? $choose : $this->choose;
-        $menu = $this->getOption($usemodel,$choose);
         $data['execute_time'] = $executetime;
-        $data['menus'] = $menu->{$choose};
-        $menuModel = new Menu();
-        $url = $this->module."/".$this->contrller."/".$this->method;
-        $menuid = $menuModel->where("route","like",$url.'%')->value('id');
-        $pids = $menuModel->getPids($menuid);
-        $this->assign("nav",$menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));
         return view(strtolower($action),$data);
     }
 
