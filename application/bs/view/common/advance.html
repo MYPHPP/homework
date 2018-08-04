@@ -1,0 +1,72 @@
+<div class="row-fluid">
+    <div class="span12">
+        <div class="tabbable tabbable-custom boxless">
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1">
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption"><i class="icon-reorder"></i>Adavnce Search</div>
+                            <div class="tools"><a href="javascript:;" class="collapse"></a></div>
+                        </div>
+                        <div class="portlet-body form">
+                            <form action="" class="horizontal-form" method="get">
+                                {php}
+                                    $advance = "[advance]";
+                                    $advances = explode(',',$advance);
+                                    if(count($advances) > 1){
+                                        $viewArrs = [];
+                                        $i = 0;
+                                        $n = 0;
+                                        foreach($advances as $tpl){
+                                            $remainder = $i % 2;
+                                            if($remainder == 0){
+                                                $n++;
+                                            }
+                                            if(isset($menus->$tpl->hidden)&&in_array($menus->$tpl->hidden,[1,"hide","hidden"])){
+                                                $i--;
+                                                if($remainder == 0){
+                                                    $n--;
+                                                }
+                                            }
+                                            $viewArrs[$n][] = $tpl;
+                                            $i++;
+                                        }
+
+                                        foreach($viewArrs as $viewarr){
+                                            echo '<div class="row-fluid">';
+                                            foreach($viewarr as $template){
+                                                $targetFile = $menus->$template->type;
+                                                if(!empty($menus->$template->advance)){
+                                {/php}
+                                                {include file="common/switch"}
+                                {php}
+                                                }
+                                            }
+                                            echo "</div>";
+                                        }
+                                    }else{
+                                {/php}
+                                    {notempty name='$advances'}
+                                {php}
+                                    $template = $advances[0];
+                                    if(!empty($menus->$template->advance)){
+                                        $targetFile = $menus->$template->type;echo '<div class="row-fluid">';
+                                {/php}
+                                        {include file="common/switch"}
+                                        {php}echo "</div>";}{/php}
+                                        {/notempty}
+                                {php}
+                                    }
+                                {/php}
+                                <div class="form-actions">
+                                    <button type="submit" class="btn blue"><i class="icon-ok"></i> 搜索</button>
+                                    <input class="btn" type="reset" value="重置">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

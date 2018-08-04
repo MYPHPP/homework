@@ -1,16 +1,12 @@
 <div class="col-md-{php}echo isset($menus->$template->size) && $menus->$template->size == 12  ? 12 : 6;{/php} {if !empty($menus->$template->hidden)} hide{/if}">
-    <div class="form-group">
-        <label>{$menus->$template->label}{if !empty($menus->$template->required)} <span style="color:firebrick">*</span>{/if} :</label>
-        <select id="{$menus->$template->name}" class="form-control select2" multiple="multiple" data-placeholder="请选择" style="width: 100%;" name="{$menus->$template->name}[]" {if !empty($menus->$template->required)}required{/if}>
-            {php}
-                if(!empty($menus->$template->data)){
-                foreach($menus->$template->data as $key=>$value){
-            {/php}
-            <option value="{$key}">{$value}</option>
-            {php}
-                }}
-            {/php}
-        </select>
+    <div class="control-group">
+        <label class="control-label">{$menus->$template->label}{if !empty($menus->$template->required)} <span style="color:firebrick">*</span>{/if} :</label>
+        <div class="controls">
+            <div class="select2-wrapper">
+                <input type="hidden" class="span6 select2_sample3" value="red, blue">
+            </div>
+        </div>
+
         <span>{if isset($menus->$template->tip)}{$menus->$template->tip}{/if}</span>
     </div>
 </div>

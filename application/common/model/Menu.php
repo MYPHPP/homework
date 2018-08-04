@@ -211,7 +211,8 @@ class Menu extends Base {
                     "label" => "路由地址",
                     "type" => "text",
                     'placeholder' => '请填写路由',
-                    'tip' => "路由地址格式：模块/控制器/方法，例：bs/index/index"
+                    'tip' => "路由地址格式：模块/控制器/方法，例：bs/index/index",
+                    'advance' =>true
                 ],
                 "position" => [
                     "label" => "展示位置",
