@@ -46,18 +46,23 @@ function filterChar($val){
 
 function curlSend($url,$data='',$type="get"){
     $type = strtolower($type);
-    $result = false;
+    $result['status'] = 0;
+    $result['msg'] = '';
     if(empty($url)){return $result;}
     try{
         $curl = curl_init();//初始化
         curl_setopt($curl, CURLOPT_URL, $url);//设置抓取的url
         curl_setopt($curl, CURLOPT_HEADER, 0);//设置头文件的信息作为数据流输出
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);//设置获取的信息以文件流的形式返回，而不是直接输出。
+        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 跟踪重定向
+        curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//绕过ssl验证
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);// 不从证书中检查SSL加密算法是否存在
         if($type != "get"){
             if(empty($data)){
                 curl_close($curl);
+                $result['msg'] = "请求类型缺少参数";
                 return $result;
             }
             curl_setopt($curl, CURLOPT_POST, 1);// 设置请求方式为post
@@ -78,11 +83,13 @@ function curlSend($url,$data='',$type="get"){
         }
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);//在尝试连接时等待的秒数。设置为0，则无限等待。
         curl_setopt($curl, CURLOPT_TIMEOUT, 60);//设置超时时间
-        $result = curl_exec($curl);//执行命令
-        dd(curl_getinfo($curl));
+        $res = curl_exec($curl);//执行命令
+        $result['status'] = 1;
+        $result['msg'] = $res;
+        //dd(curl_getinfo($curl));
         curl_close($curl);//关闭句柄
     }catch (Exception $e){
-        return $e->getMessage();
+        $result['msg'] = $e->getMessage();
     }
     return $result;
 }
