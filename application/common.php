@@ -59,6 +59,7 @@ function curlSend($url,$data='',$type="get"){
         curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//绕过ssl验证
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);// 不从证书中检查SSL加密算法是否存在
+        //curl_setopt($curl, CURLOPT_HTTPHEADER, array('Expect:'));//数据量大的时候设置
         if($type != "get"){
             if(empty($data)){
                 curl_close($curl);
