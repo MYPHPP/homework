@@ -59,7 +59,10 @@ function curlSend($url,$data='',$type="get"){
         curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//绕过ssl验证
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);// 不从证书中检查SSL加密算法是否存在
-        //curl_setopt($curl, CURLOPT_HTTPHEADER, array('Expect:'));//数据量大的时候设置
+        //数据量大的时候设置
+        //curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //强制协议为1.0
+        //curl_setopt($curl, CURLOPT_HTTPHEADER, array('Expect:')); //头部要送出'Expect: '
+        //curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 ); //强制使用IPV4协议解析域名
         if($type != "get"){
             if(empty($data)){
                 curl_close($curl);
