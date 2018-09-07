@@ -63,6 +63,7 @@ function curlSend($url,$data='',$type="get"){
         //curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0); //强制协议为1.0
         //curl_setopt($curl, CURLOPT_HTTPHEADER, array('Expect:')); //头部要送出'Expect: '
         //curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 ); //强制使用IPV4协议解析域名
+        //curl_setopt($curl, CURLOPT_NOSIGNAL, 1 ); //启用时忽略所有的curl传递给php进行的信号。在SAPI多线程传输时此项被默认打开。
         if($type != "get"){
             if(empty($data)){
                 curl_close($curl);
@@ -95,5 +96,28 @@ function curlSend($url,$data='',$type="get"){
     }catch (Exception $e){
         $result['msg'] = $e->getMessage();
     }
+    return $result;
+}
+
+/*
+ *异步非阻塞调用
+ * @param  $host 主机名
+ * @param  $path 要访问的地址，不带主机名
+ * @param  $port 端口号
+ * */
+function async($host,$path,$port=80){
+    $result = ['code'=>200,'msg'=>'success'];
+    $fp = fsockopen($host,$port,$error_code,$error_msg,1);
+    if(!$fp) {
+        return array('code' => $error_code,'msg' => $error_msg);
+    }
+    stream_set_blocking($fp,true);//开启了手册上说的非阻塞模式
+    stream_set_timeout($fp,1);//设置超时
+    $header = "GET $path HTTP/1.1".PHP_EOL;
+    $header.='Host:'.$host.PHP_EOL;
+    $header.="Connection: close".PHP_EOL.PHP_EOL;//长连接关闭
+    fwrite($fp, $header);
+    usleep(1000); // 这一句也是关键，如果没有这延时，可能在nginx服务器上就无法执行成功
+    fclose($fp);
     return $result;
 }
