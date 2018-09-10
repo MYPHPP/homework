@@ -121,3 +121,18 @@ function async($host,$path,$port=80){
     fclose($fp);
     return $result;
 }
+
+/*
+ * 页面实时输出
+ * */
+function realtimeOutput(){
+    ob_end_clean();//清除并关闭缓冲，输出到浏览器之前使用这个函数
+    ob_implicit_flush(1);//控制隐式缓冲泻出，默认off，打开时，对每个 print/echo 或者输出命令的结果都发送到浏览器
+    for($i=0;$i<10;$i++){
+        echo str_repeat(' ',256);
+        echo $i;
+        ob_flush();
+        flush();
+        sleep(1);
+    }
+}
