@@ -112,7 +112,7 @@ function async($host,$path,$port=80){
         return array('code' => $error_code,'msg' => $error_msg);
     }
     stream_set_blocking($fp,true);//开启了手册上说的非阻塞模式
-    stream_set_timeout($fp,1);//设置超时
+    stream_set_timeout($fp,30);//设置超时
     $header = "GET $path HTTP/1.1".PHP_EOL;
     $header.='Host:'.$host.PHP_EOL;
     $header.="Connection: close".PHP_EOL.PHP_EOL;//长连接关闭
