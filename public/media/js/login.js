@@ -48,14 +48,26 @@ var Login = function () {
 	            },
 
 	            submitHandler: function (form) {
-	                window.location.href = "index.html";
+	            	var data = $(form).serialize();
+	            	$.ajax({
+						type: "post",
+						url: window.location,
+						data: data,
+						dataType: 'josn',
+						success: function () {
+							return false;
+                        }
+					});
+	            	return false;
+	                //window.location.href = "index.html";
 	            }
 	        });
 
 	        $('.login-form input').keypress(function (e) {
 	            if (e.which == 13) {
 	                if ($('.login-form').validate().form()) {
-	                    window.location.href = "index.html";
+	                	return false;
+	                    //window.location.href = "index.html";
 	                }
 	                return false;
 	            }

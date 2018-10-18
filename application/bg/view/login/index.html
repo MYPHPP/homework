@@ -32,7 +32,7 @@
 <body class="login">
 <!-- BEGIN LOGO -->
 <div class="logo">
-    <img src="__PUBLIC__media/image/logo-big.png" alt="" />
+    <!--<img src="__PUBLIC__media/image/logo-big.png" alt="" />-->
 </div>
 <!-- END LOGO -->
 
@@ -40,7 +40,7 @@
 <div class="content">
     <!-- BEGIN LOGIN FORM -->
     <form class="form-vertical login-form" action="" method="post">
-        <h3 class="form-title">Login to your account</h3>
+        <h3 class="form-title">Login</h3>
         <!--<div class="alert alert-error hide">-->
             <!--<button class="close" data-dismiss="alert"></button>-->
             <!--<span>Enter any username and password.</span>-->
@@ -62,6 +62,23 @@
                 <div class="input-icon left">
                     <i class="icon-lock"></i>
                     <input class="m-wrap placeholder-no-fix" type="password" placeholder="Password" name="password" required/>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label visible-ie8 visible-ie9">验证码</label>
+            <div class="controls">
+                <div class="input-icon left">
+                    <input class="m-wrap placeholder-no-fix" type="text" name="code" required  placeholder="输入验证码"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <div class="left">
+                    <img src="{:url('bg/login/createVerify')}" alt="" />
                 </div>
             </div>
         </div>
