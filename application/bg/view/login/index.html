@@ -41,10 +41,10 @@
     <!-- BEGIN LOGIN FORM -->
     <form class="form-vertical login-form" action="" method="post">
         <h3 class="form-title">Login</h3>
-        <!--<div class="alert alert-error hide">-->
-            <!--<button class="close" data-dismiss="alert"></button>-->
-            <!--<span>Enter any username and password.</span>-->
-        <!--</div>-->
+        <div class="alert alert-error hide">
+            <button class="close" data-dismiss="alert"></button>
+            <span>Enter any username and password.</span>
+        </div>
         <div class="control-group">
             <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
             <label class="control-label visible-ie8 visible-ie9">账号</label>
@@ -78,7 +78,7 @@
         <div class="control-group">
             <div class="controls">
                 <div class="left">
-                    <img src="{:url('bg/login/createVerify')}" alt="" />
+                    <img src="{:url('bg/login/createVerify')}" alt="" /><span class="change">切换</span>
                 </div>
             </div>
         </div>
@@ -235,6 +235,9 @@
     jQuery(document).ready(function() {
         App.init();
         Login.init();
+    });
+    $('.change').on('click',function () {
+        $(this).prev().attr('src',"{:url('bg/login/createVerify')}");
     });
 </script>
 <!-- END JAVASCRIPTS -->

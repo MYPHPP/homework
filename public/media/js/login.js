@@ -29,9 +29,9 @@ var Login = function () {
 	                }
 	            },
 
-	            invalidHandler: function (event, validator) { //display error alert on form submit   
-	                $('.alert-error', $('.login-form')).show();
-	            },
+	            // invalidHandler: function (event, validator) { //display error alert on form submit
+	            //     $('.alert-error', $('.login-form')).show();
+	            // },
 
 	            highlight: function (element) { // hightlight error inputs
 	                $(element)
@@ -53,10 +53,13 @@ var Login = function () {
 						type: "post",
 						url: window.location,
 						data: data,
-						dataType: 'josn',
-						success: function () {
-							return false;
-                        }
+						dataType: 'json',
+						success: function(msg){
+                            if(msg.status == 0){
+                                $('.alert-error', $('.login-form')).find('span').text(msg.msg);
+                                $('.alert-error', $('.login-form')).show();
+							}
+						},
 					});
 	            	return false;
 	                //window.location.href = "index.html";
