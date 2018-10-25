@@ -1,12 +1,10 @@
 <?php
 namespace app\bg\controller;
 
-use app\model\User;
 use think\Controller;
 use think\captcha\Captcha;
 use think\Request;
 use think\Validate;
-use think\Config;
 
 class Login extends Controller{
     public function index(Request $request){
@@ -28,13 +26,15 @@ class Login extends Controller{
             if(!$validate->check($data)){
                 exit(json_encode(['status'=>0,'msg'=>$validate->getError()]));
             }
+            $userModel = new User();
+            $userinfo = $userModel->checkLogin($data['username'],$data['password']);
             if(!captcha_check($data['code'])){
-                exit(json_encode(['status'=>0,'msg'=>'验证码错误']));
+                exit(json_encode(['status'=>1,'msg'=>'验证码错误']));
             }
-            if(!empty($user)){
-                exit(json_encode(['status'=>1,'msg'=>'跳转']));
-            }else{
+            if(!$userinfo){
                 exit(json_encode(['status'=>0,'msg'=>'用户名或密码错误']));
+            }else{
+                exit(json_encode(['status'=>2,'msg'=>url('bg/dashboard/index')]));
             }
         }
         return view();

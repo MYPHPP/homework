@@ -55,11 +55,14 @@ var Login = function () {
 						data: data,
 						dataType: 'json',
 						success: function(msg){
-                            if(msg.status == 0){
-                                $('.alert-error', $('.login-form')).find('span').text(msg.msg);
-                                $('.alert-error', $('.login-form')).show();
-							}
-						},
+                            // if(msg.status != 2){
+                             //    $('.alert-error', $('.login-form')).find('span').text(msg.msg);
+                             //    $('.alert-error', $('.login-form')).show();
+							// }
+							// if(msg.status == 2){
+                            	// window.location.href = msg.msg;
+							// }
+						}
 					});
 	            	return false;
 	                //window.location.href = "index.html";
