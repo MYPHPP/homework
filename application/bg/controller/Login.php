@@ -62,4 +62,10 @@ class Login extends Controller{
         $captcha = new Captcha();
         return $captcha->entry();
     }
+
+    public function logout(){
+        session('user',null);
+        cookie('user',null);
+        return redirect(url('bg/login/index'));
+    }
 }

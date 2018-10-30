@@ -1,12 +1,14 @@
 <?php
 namespace app\model;
 
-use think\Model;
-
-class User extends Model
+class User extends Common
 {
     const VERIFYCODE = false;
     protected $pk = 'id';
+
+    public function role(){
+        return $this->hasOne('Role','id','role_id');
+    }
 
     /**
      * Description 验证登录信息
