@@ -1,6 +1,7 @@
 <?php
 namespace app\bg\controller;
 
+use app\model\Menu;
 use app\model\User;
 use think\Controller;
 use think\captcha\Captcha;
@@ -9,7 +10,7 @@ use think\Validate;
 
 class Login extends Controller{
     public function index(Request $request){
-        if(!empty(cookie('user'))){
+        if(!empty(cookie('user')) || !empty(session('user'))){
             return redirect(url('bg/dashboard/index'));
         }
         $isCheckVerify = User::VERIFYCODE;
@@ -47,6 +48,7 @@ class Login extends Controller{
                 if(!empty($request->remember) && $request->remember == 1){
                     cookie('user',$userinfo->id,3600*8);
                 }
+                //$menu = Menu::where('is_del',0)->where('route')->whereIn('access',explode(',',$userinfo->assess))->order('sort desc')->
                 exit(json_encode(['status'=>1,'msg'=>url('bg/dashboard/index')]));
             }
         }

@@ -5,6 +5,7 @@ use app\model\Menu;
 use app\model\User;
 use think\App;
 use think\Controller;
+use think\Db;
 use think\Request;
 
 class Background extends Controller
@@ -21,9 +22,39 @@ class Background extends Controller
         }
         $this->userinfo = User::get(session('user'));
         $this->assign('userinfo',$this->userinfo);
-        $menuModel = new Menu();
         $route = strtolower($request->module().'/'.$request->controller().'/'.$request->action());
-        $route = str_replace('/','\/',$route);
-        $this->assign('navMenu',$menuModel->getCategory(explode(',',$this->userinfo->role->access),$route));
+        $this->checkRole($route);
+    }
+
+    public function checkRole($route){
+        $pids = [];
+        $access = explode(',',$this->userinfo->role->access);
+        $menuModel = new Menu();
+        $menus = $menuModel->where('is_del',0)->whereIn('id',$access)->field('id,route')->select();
+        if($menus->count() > 0){
+            foreach($menus as $menu){
+                if(!empty($menu->route)){
+                    $mArr = explode('/',$menu->route);
+                    if(count($mArr)>2){
+                        if($route == strtolower($mArr[0].'/'.$mArr[1].'/'.$mArr[2])){
+                            $pids = $menuModel->getPids($menu->id);
+                        }
+                    }
+                }
+            }
+        }
+        $this->assign('navMenu',$menuModel->getCategory($access,$pids));
+        if(empty($pids)){
+            //return $this->redirect(url('bg/error/show'));
+            return $this->errorPage();
+        }
+    }
+
+    public function errorPage(){
+        return view('error/404');
+    }
+
+    public function _empty(){
+        return view('error/404');
     }
 }
