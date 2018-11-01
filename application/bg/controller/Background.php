@@ -13,12 +13,8 @@ class Background extends Controller
     public function __construct(App $app ,Request $request)
     {
         parent::__construct($app);
-        if(!empty(cookie('user'))){
-            session('user',cookie('user'));
-        }
-        if(empty(session('user'))){
-            return $this->redirect(url('bg/login/index'));
-        }
+        if(!empty(cookie('user'))) session('user',cookie('user'));
+        if(empty(session('user'))) return $this->redirect(url('bg/login/index'));
         $this->userinfo = User::get(session('user'));
         $this->assign('userinfo',$this->userinfo);
         $access = explode(',',$this->userinfo->role->access);
