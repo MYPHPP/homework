@@ -30,6 +30,14 @@ class Background extends Controller
         }
     }
 
+    /**
+     * Description 判断角色对路由的权限
+     * @CreateTime 2018/11/1 14:26:33
+     * @param $menuModel
+     * @param $access
+     * @param $route
+     * @return bool
+     */
     public function checkRole($menuModel ,$access ,$route){
         $pids = [];
         $menus = $menuModel->where('is_del',0)->whereIn('id',$access)->field('id,route')->select();
@@ -53,6 +61,11 @@ class Background extends Controller
         }
     }
 
+    /**
+     * Description 空操作跳转
+     * @CreateTime 2018/11/1 14:26:51
+     * @return \think\response\View
+     */
     public function _empty(){
         return view('error/404');
     }

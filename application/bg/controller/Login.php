@@ -11,7 +11,10 @@ use think\Validate;
 class Login extends Controller{
     public function index(Request $request){
         if(!empty(cookie('user')) || !empty(session('user'))){
-            return redirect(url('bg/dashboard/index'));
+            $userinfo = User::find(session('user'));
+            $menuModel = new Menu();
+            $homePage = $menuModel->getHomePage(explode(',',$userinfo->role->access));
+            return redirect(url($homePage));
         }
         $isCheckVerify = User::VERIFYCODE;
         if($request->isAjax()){
