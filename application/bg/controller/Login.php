@@ -44,12 +44,17 @@ class Login extends Controller{
             if(!$userinfo){
                 exit(json_encode(['status'=>0,'msg'=>'用户名或密码错误']));
             }else{
-                session('user',$userinfo->id);
-                if(!empty($request->remember) && $request->remember == 1){
-                    cookie('user',$userinfo->id,3600*8);
+                $menuModel = new Menu();
+                $homePage = $menuModel->getHomePage(explode(',',$userinfo->role->access));
+                if(!empty($homePage)){
+                    if(!empty($request->remember) && $request->remember == 1){
+                        cookie('user',$userinfo->id,3600*8);
+                    }
+                    session('user',$userinfo->id);
+                    exit(json_encode(['status'=>1,'msg'=>url($homePage)]));
+                }else{
+                    exit(json_encode(['status'=>0,'msg'=>'该账号没有任何权限,联系管理员处理']));
                 }
-                //$menu = Menu::where('is_del',0)->where('route')->whereIn('access',explode(',',$userinfo->assess))->order('sort desc')->
-                exit(json_encode(['status'=>1,'msg'=>url('bg/dashboard/index')]));
             }
         }
         $this->assign('isShow',$isCheckVerify);

@@ -5,7 +5,6 @@ use app\model\Menu;
 use app\model\User;
 use think\App;
 use think\Controller;
-use think\Db;
 use think\Request;
 
 class Background extends Controller
@@ -22,21 +21,24 @@ class Background extends Controller
         }
         $this->userinfo = User::get(session('user'));
         $this->assign('userinfo',$this->userinfo);
-        $route = strtolower($request->module().'/'.$request->controller().'/'.$request->action());
-        $this->checkRole($route);
-    }
-
-    public function checkRole($route){
-        $pids = [];
         $access = explode(',',$this->userinfo->role->access);
         $menuModel = new Menu();
+        $this->assign('hompage',url($menuModel->getHomePage($access)));
+        $route = strtolower($request->module().DIRECTORY_SEPARATOR.$request->controller().DIRECTORY_SEPARATOR.$request->action());
+        if(!$this->checkRole($menuModel ,$access ,$route)){
+            return view('error/404');
+        }
+    }
+
+    public function checkRole($menuModel ,$access ,$route){
+        $pids = [];
         $menus = $menuModel->where('is_del',0)->whereIn('id',$access)->field('id,route')->select();
         if($menus->count() > 0){
             foreach($menus as $menu){
                 if(!empty($menu->route)){
                     $mArr = explode('/',$menu->route);
                     if(count($mArr)>2){
-                        if($route == strtolower($mArr[0].'/'.$mArr[1].'/'.$mArr[2])){
+                        if($route == strtolower($mArr[0].DIRECTORY_SEPARATOR.$mArr[1].DIRECTORY_SEPARATOR.$mArr[2])){
                             $pids = $menuModel->getPids($menu->id);
                         }
                     }
@@ -45,13 +47,10 @@ class Background extends Controller
         }
         $this->assign('navMenu',$menuModel->getCategory($access,$pids));
         if(empty($pids)){
-            //return $this->redirect(url('bg/error/show'));
-            return $this->errorPage();
+            return false;
+        }else{
+            return true;
         }
-    }
-
-    public function errorPage(){
-        return view('error/404');
     }
 
     public function _empty(){
