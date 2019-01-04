@@ -2,6 +2,7 @@
 namespace app\bs\controller;
 
 use app\common\model\User;
+use crypt\Crypt;
 use think\Controller;
 use think\Request;
 use think\Validate;
@@ -40,20 +41,18 @@ class Index extends Controller{
                 $this->error("信息填写不完整");
             }
             $request->name = filterChar($request->name);
-            $user = $model->where(['name'=>$request->name])->field('lid,name,passwd')->find();
+            $user = $model->where(['name'=>$request->name,'passwd'=>Crypt::encrypt(trim($request->passwd))])->field('id,name,passwd')->find();
             if(!empty($user)){
-                if(!empty($user['passwd']) && $user['passwd'] == $request->passwd){
-                    session('login_id',$user['lid']);
-                    if(!empty($request->remember)){
-                        cookie("ms_login_id",$user['lid'],7*86400);
-                    }
-                    if(!empty(cookie("ms_currentUrl"))){
-                        return redirect(cookie("ms_currentUrl"));
-                    }else{
-                        return redirect($this->loginJump());
-                    }
+                session('login_id',$user['id']);
+                session('login_pwd',$user['passwd']);
+                if(!empty($request->remember)){
+                    cookie("ms_login_id",$user['id'],7*86400);
+                    cookie("ms_login_pwd",$user['passwd'],7*86400);
+                }
+                if(!empty(cookie("ms_currentUrl"))){
+                    return redirect(cookie("ms_currentUrl"));
                 }else{
-                    $this->error('账号或密码错误');
+                    return redirect($this->loginJump());
                 }
             }else{
                 $this->error('账号或密码错误');

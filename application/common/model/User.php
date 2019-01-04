@@ -2,11 +2,10 @@
 namespace app\common\model;
 
 use think\Model;
-use app\custom\Crypto;
 
 class User extends Model{
-    protected $pk = "lid";//设置主键
-    protected $table = "tt_user";//设置表名
+    protected $pk = "id";//设置主键
+    //protected $table = "tt_user";//设置表名
     //protected $connection = "";//设置数据库
 
     /*
@@ -17,20 +16,6 @@ class User extends Model{
     }
 
     /*
-     * 加密密码
-     * */
-    public function setPasswdAttr($value){
-        return Crypto::aesencrypt($value);
-    }
-
-    /*
-     * 解密密码
-     * */
-    public function getPasswdAttr($value){
-        return Crypto::aesdecrypt($value);
-    }
-
-    /*
      * 验证登录
      * */
     public function checkLogin(){
@@ -38,13 +23,16 @@ class User extends Model{
         if(!empty(cookie("ms_login_id") || !empty(session('login_id')))){
             if(empty(session('login_id'))){
                 session('login_id',cookie("ms_login_id"));
+                session('login_pwd',cookie("ms_login_pwd"));
             }
             $user = User::get(session('login_id'));
-            if(!empty($user)){
+            if($user['passwd'] == session('login_pwd')){
                 $check = true;
             }else{
                 session('login_id',null);
-                cookie("login_id",null);
+                session('login_pwd',null);
+                cookie("ms_login_id",null);
+                cookie("ms_login_pwd",null);
             }
         }
         return $check;
