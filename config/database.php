@@ -8,28 +8,29 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+use \think\facade\Env;
 
 return [
     // 数据库类型
-    'type'            => 'mysql',
+    'type'            => Env::get('DB_CONNECTION','mysql'),
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => Env::get('DB_HOST','127.0.0.1'),
     // 数据库名
-    'database'        => 'tptest',
+    'database'        => Env::get('DB_DATABASE','dbname'),
     // 用户名
-    'username'        => 'root',
+    'username'        => Env::get('DB_USERNAME','root'),
     // 密码
-    'password'        => 'root',
+    'password'        => Env::get('DB_PASSWORD','root'),
     // 端口
-    'hostport'        => '3306',
+    'hostport'        => Env::get('DB_PORT','3306'),
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数
     'params'          => [],
     // 数据库编码默认采用utf8
-    'charset'         => 'utf8',
+    'charset'         => Env::get('DB_CHARSET','utf8'),
     // 数据库表前缀
-    'prefix'          => 'tt_',
+    'prefix'          =>Env::get('DB_PREFIX','tp_'),
     // 数据库调试模式
     'debug'           => true,
     // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
