@@ -6,8 +6,8 @@ class Menu extends Base {
     /*
      *登录用户权限菜单
      * */
-    static public function getUserMenu($fields = []){
-        $role = User::where('lid',session('login_id'))->find();
+    public static function getUserMenu($fields = []){
+        $role = User::where('id',session('login_id'))->find();
         if(!empty($role) && !empty($role->role->access)){
             $model = new Menu();
             $model = $model->whereIn("id",$role->role->access);
@@ -27,7 +27,7 @@ class Menu extends Base {
     /*
      * 后台logo对应的链接
      * */
-    static public function getLogoLink(){
+    public static function getLogoLink(){
         $route = '';
         $menus = self::getUserMenu('route')->toArray();
         $menus = array_column($menus,'route');
@@ -102,8 +102,8 @@ class Menu extends Base {
             }else{
                 $html = '<ul class="sub-menu">'.$html."</ul>";
             }
-            return $html;
         }
+        return $html;
     }
 
     /*

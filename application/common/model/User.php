@@ -12,7 +12,7 @@ class User extends Model{
      * 设置角色关联模型
      * */
     public function role(){
-        return $this->hasOne('Role',"id",'roleid');
+        return $this->hasOne('Role',"id",'role_id');
     }
 
     /*
@@ -60,7 +60,7 @@ class User extends Model{
      * 获取登录用户的信息
      * */
     public function getLoginInfo($field=''){
-        $model = $this->where('lid',session('login_id'));
+        $model = $this->where($this->pk,session('login_id'));
         if(!empty($field)){
             $model = $model->field($field);
         }

@@ -20,7 +20,9 @@ class Base extends Controller {
     public function __construct(Request $request)
     {
         parent::__construct();
-        cookie("ms_currentUrl",$request->url());
+        if(!strpos($request->url(),'about')){
+            cookie("ms_currentUrl",$request->url());
+        }
         $this->module = strtolower($request->module());
         $this->contrller = strtolower($request->controller());
         $this->method = strtolower($request->action());
@@ -60,6 +62,7 @@ class Base extends Controller {
         $menuid = $menuModel->where("route","like",$url.'%')->value('id');
         $pids = $menuModel->getPids($menuid);
         $this->assign("nav",$menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));//左侧菜单
+        print_r($menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));die;
         $menus = $this->getOptionMenu();
         $this->assign('menus',$menus);
         $this->assign('tab',$menuModel->getTab($pids,$menuid));//内容导航栏

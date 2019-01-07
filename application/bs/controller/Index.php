@@ -2,7 +2,6 @@
 namespace app\bs\controller;
 
 use app\common\model\User;
-use crypt\Crypt;
 use think\Controller;
 use think\Request;
 use think\Validate;
@@ -41,7 +40,7 @@ class Index extends Controller{
                 $this->error("信息填写不完整");
             }
             $request->name = filterChar($request->name);
-            $user = $model->where(['name'=>$request->name,'passwd'=>Crypt::encrypt(trim($request->passwd))])->field('id,name,passwd')->find();
+            $user = $model->where(['name'=>$request->name,'passwd'=>md5(md5(trim($request->passwd)))])->field('id,name,passwd')->find();
             if(!empty($user)){
                 session('login_id',$user['id']);
                 session('login_pwd',$user['passwd']);

@@ -143,4 +143,7 @@ return [
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
 
+    //使用加密解密函数用到的key
+    'web_key' => 'AiFfBcGsXtIdjO01cvjY4FMZ6akv+u7ouQt1xCKVy',
+
 ];
