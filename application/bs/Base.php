@@ -61,8 +61,7 @@ class Base extends Controller {
         $menuModel = new Menu();
         $menuid = $menuModel->where("route","like",$url.'%')->value('id');
         $pids = $menuModel->getPids($menuid);
-        $this->assign("nav",$menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));//左侧菜单
-        print_r($menuModel->getNav($this->loginUserinfo->role->access,$pids,$url));die;
+        $this->assign("nav",$menuModel->getCategory($this->loginUserinfo->role->access,$pids,$menuid));//左侧菜单
         $menus = $this->getOptionMenu();
         $this->assign('menus',$menus);
         $this->assign('tab',$menuModel->getTab($pids,$menuid));//内容导航栏

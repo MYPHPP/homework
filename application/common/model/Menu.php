@@ -75,8 +75,58 @@ class Menu extends Base {
         return $pids;
     }
 
+    /**
+     * Description 左侧菜单栏
+     * @CreateTime 2018/11/1 9:40:10
+     * @param $access
+     * @param $pids
+     * @param int $pid
+     * @param string $html
+     * @return string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getCategory($access ,$pids ,$current=1 ,$pid=0 ,$html='')
+    {
+        $menus = $this->where('position',1)
+            ->where('pid',$pid)
+            ->whereIn('id',$access)
+            ->order('sort desc')
+            ->select();
+        if($menus->count() > 0){
+            if($pid == 0){
+                $html .= '<ul class="page-sidebar-menu"><li><div class="sidebar-toggler hidden-phone"></div></li>';
+            }else{
+                $html .= '<ul class="sub-menu">';
+            }
+            foreach($menus as $menu){
+                if(in_array($menu->id,$pids) || $menu->id == $current){
+                    $html .= '<li class="active">';
+                }else{
+                    $html .= '<li class="">';
+                }
+                if(!empty($menu->route)){
+                    $html .= '<a href="'.url($menu->route).'">';
+                }else{
+                    $html .= '<a href="javascript:;">';
+                }
+                $html .= '<i class="'.$menu->icon.'"></i><span class="title">'.$menu->title.'</span>';
+                $childs = $this->where('pid',$menu->id)->where('position','=',1)->count();
+                if($childs > 0){
+                    $html .= '<span class="arrow "></span>';
+                }
+                $html .='</a>';
+                $html = $this->getCategory($access ,$pids ,$current ,$menu->id ,$html);
+                $html .= '</li>';
+            }
+            $html .= '</ul>';
+        }
+        return $html;
+    }
+
     /*
-     * 左侧菜单栏
+     * 左侧菜单栏(暂时废弃)
      * */
     public function getNav($ids,$pidArr,$visit,$pid=0,$level=0){
         $html = '';
