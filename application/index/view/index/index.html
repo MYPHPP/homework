@@ -3,26 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    {load href="/media/js/jquery-1.10.1.min.js" /}
 </head>
 <body>
-<input id="test" type="button" value="test">
-<form action="http://risk.yintong88.com/index.php/Login/decisionStatProc" method="post">
-    <input type="text" value="report" name="state"><br/>
-    <input type="text" value="15324116639851157707" name="search_id"><br/>
-    <input type="submit" value="提交">
-</form>
+
 </body>
-<script>
-    $("#test").click(function () {
-        $.ajax({
-            url:location,
-            type:"post",
-            data:{"name":"eee"},
-            success:function (msg) {
-                alert(msg);
-            }
-        });
-    });
-</script>
 </html>
