@@ -87,7 +87,47 @@ class Menu extends Base {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getCategory($access ,$pids ,$current=1 ,$pid=0 ,$html='')
+    public function getCategory($access ,$pids ,$current=1 ,$pid=0 ,$html=''){
+        $menus = $this->where('position',1)
+            ->where('pid',$pid)
+            ->whereIn('id',$access)
+            ->order('sort desc')
+            ->select();
+        if($menus->count() > 0){
+            if($pid == 0){
+                $html .= '<ul class="sidebar-menu">';
+            }else{
+                $html .= '<ul class="treeview-menu">';
+            }
+            foreach($menus as $menu){
+                $childs = $this->where('pid',$menu->id)->where('position','=',1)->count();
+                $treeview = '';
+                if($childs > 0){
+                    $treeview = 'treeview';
+                }
+                if(in_array($menu->id,$pids) || $menu->id == $current){
+                    $treeview = $treeview.' active';
+                }
+                $html .='<li class="'.$treeview.'">';
+                if(!empty($menu->route)){
+                    $html .= '<a href="'.url($menu->route).'">';
+                }else{
+                    $html .= '<a href="javascript:;">';
+                }
+                $html .= '<i class="'.$menu->icon.'"></i><span class="title">'.$menu->title.'</span>';
+                if($childs > 0){
+                    $html .= '<i class="fa fa-angle-left pull-right"></i>';
+                }
+                $html .='</a>';
+                $html = $this->getCategory($access ,$pids ,$current ,$menu->id ,$html);
+                $html .= '</li>';
+            }
+            $html .= '</ul>';
+        }
+        return $html;
+    }
+
+    public function getCategory1($access ,$pids ,$current=1 ,$pid=0 ,$html='')
     {
         $menus = $this->where('position',1)
             ->where('pid',$pid)
@@ -96,9 +136,9 @@ class Menu extends Base {
             ->select();
         if($menus->count() > 0){
             if($pid == 0){
-                $html .= '<ul class="page-sidebar-menu"><li><div class="sidebar-toggler hidden-phone"></div></li>';
+                $html .= '<ul class="sidebar-menu">';
             }else{
-                $html .= '<ul class="sub-menu">';
+                $html .= '<ul class="treeview-menu">';
             }
             foreach($menus as $menu){
                 if(in_array($menu->id,$pids) || $menu->id == $current){
@@ -114,7 +154,7 @@ class Menu extends Base {
                 $html .= '<i class="'.$menu->icon.'"></i><span class="title">'.$menu->title.'</span>';
                 $childs = $this->where('pid',$menu->id)->where('position','=',1)->count();
                 if($childs > 0){
-                    $html .= '<span class="arrow "></span>';
+                    $html .= '<i class="fa fa-angle-left pull-right"></i>';
                 }
                 $html .='</a>';
                 $html = $this->getCategory($access ,$pids ,$current ,$menu->id ,$html);

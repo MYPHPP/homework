@@ -14,6 +14,7 @@ class Base extends Controller {
     protected $method;
     protected $contrller;
     protected $useModel;
+    protected $request;
     protected $choose = "default";
     protected $loginUserinfo;
 
@@ -23,6 +24,7 @@ class Base extends Controller {
         if(!strpos($request->url(),'about')){
             cookie("ms_currentUrl",$request->url());
         }
+        $this->request = $request;
         $this->module = strtolower($request->module());
         $this->contrller = strtolower($request->controller());
         $this->method = strtolower($request->action());
@@ -178,5 +180,9 @@ class Base extends Controller {
             $this->success('新加成功',null,'',1);
         }
         return $this->show(strtolower($request->action()));
+    }
+
+    public function edit(){
+        return $this->show(strtolower('add'));
     }
 }
