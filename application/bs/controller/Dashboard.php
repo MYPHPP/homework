@@ -7,7 +7,7 @@ use think\Request;
 class Dashboard extends Base{
     public function index(Request $request)
     {
-        return $this->show();
+        return $this->fetch();
     }
 
     public function getOptionMenu($usemodel='',$choose='')

@@ -64,91 +64,14 @@ class Base extends Controller {
         $menuid = $menuModel->where("route","like",$url.'%')->value('id');
         $pids = $menuModel->getPids($menuid);
         $this->assign("nav",$menuModel->getCategory($this->loginUserinfo->role->access,$pids,$menuid));//左侧菜单
-        $menus = $this->getOptionMenu();
-        $this->assign('menus',$menus);
         $this->assign('tab',$menuModel->getTab($pids,$menuid));//内容导航栏
-    }
-
-    /*
-     * 内容页配置
-     * */
-    public function getOptionMenu($usemodel='',$choose=''){
-        $usemodel = !empty($usemodel) ? $usemodel : $this->useModel;
-        $choose = !empty($choose) ? $choose : $this->choose;
-        $menu = $this->getOption($usemodel,$choose);
-        return $menu->{$choose};
-    }
-
-    /*
-     * 页面显示
-     * */
-    public function getOption($modelname,$choose="default"){
-        $useModel = "\\app\\common\\model\\".$modelname;
-        $model = new $useModel;
-        $menus = $model->getCF($choose);
-        foreach($menus[$choose] as $key=>$menu){
-            if(empty($menu['name'])){
-                $menus[$choose][$key]['name'] = $key;
-            }
-        }
-        $result = array2obj($menus);
-        return $result;
-    }
-
-    /*
-     * 验证数据
-     * */
-    public function checkData(Request $request,$useModel,$choose="default"){
-        $rule = [];
-        $tipMsg = [];
-        $data = [];
-        $menus = $this->getOption($useModel,$choose);
-        foreach ($menus->{$choose} as $menu){
-            //查找验证规则
-            if(isset($request->{$menu->name})){
-                if(!empty($menu->validate)){
-                    $rule[$menu->name] = $menu->validate->rule;
-                    $tips = explode('|',$menu->validate->rule);
-                    foreach ($tips as $tip){
-                        if(strrpos($tip,':')){
-                            $tip = substr($tip,0,strrpos($tip,':'));
-                        }
-                        $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
-                    }
-                }
-                if(is_array($request->{$menu->name})){
-                    $request->{$menu->name} = implode(",",$request->{$menu->name});
-                }
-                $data[$menu->name] = filterChar($request->{$menu->name});
-            }
-        }
-        $result = ['status'=>200,'data'=>$data];
-        if(!empty($rule)){
-            //$validate = Validate::make($rule,$tipMsg)->batch();//批量验证
-            $validate = Validate::make($rule,$tipMsg);//单个验证
-            if(!$validate->check($data)){
-                $result = ['status' => 301,'data'=>$validate->getError()];
-            }
-        }
-        return $result;
-    }
-
-    /*
-     * 页面模板
-     * */
-    public function show($action='',$data=[]){
-        $action = !empty($action) ? $action : $this->method;
-        $executetime = microtime(true) - EXECUTE_TIME;
-        $executetime = round($executetime,3);
-        $data['execute_time'] = $executetime;
-        return view(strtolower($action),$data);
     }
 
     /*
      * 列表页
      * */
     public function index(Request $request){
-        return $this->show(strtolower($request->action()));
+        return $this->fetch();
     }
 
    /*
@@ -179,10 +102,10 @@ class Base extends Controller {
             }
             $this->success('新加成功',null,'',1);
         }
-        return $this->show(strtolower($request->action()));
+        return $this->fetch();
     }
 
     public function edit(){
-        return $this->show(strtolower('add'));
+        return $this->fetch('add');
     }
 }
