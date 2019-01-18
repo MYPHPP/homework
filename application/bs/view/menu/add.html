@@ -10,9 +10,30 @@
                     <a class="btn btn-primary" href="javascript :history.back(-1)">返回列表</a>
                 {/if}
             </div>
-            <div class="box-body">
+            <form role="form">
+                <div class="box-body">
+                    <div class="form-group col-xs-6">
+                        <label for="title">标题</label>
+                        <input type="email" class="form-control" id="title" placeholder="Enter email">
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="route">路由</label>
+                        <input type="password" class="form-control" id="route" placeholder="Password">
+                        <p class="help-block">路由规则：模块/控制器/方法(eg:bs/menu/add)</p>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="sort">排序</label>
+                        <input type="password" class="form-control" id="sort" placeholder="Password">
+                        <p class="help-block">数字越大越靠前</p>
+                    </div>
+                </div>
+                <!-- /.box-body -->
 
-            </div>
+                <div class="box-footer text-center">
+                    <button type="reset" class="btn btn-primary">重置</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
