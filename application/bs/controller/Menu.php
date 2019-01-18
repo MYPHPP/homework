@@ -16,4 +16,8 @@ class Menu extends Base {
         ]);
         return $this->fetch();
     }
+
+    public function add(){
+        return $this->fetch();
+    }
 }

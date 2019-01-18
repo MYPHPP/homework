@@ -43,15 +43,9 @@ class User extends Model{
      * */
     public function checkAuth($url){
         $auth = false;
-        $menus = Menu::getUserMenu('route');
-        if(!empty($menus) && (is_object($menus) && $menus->count() >0)){
-            foreach ($menus as $menu){
-                $route = explode('/',strtolower($menu->route));
-                $menuRoute = current($route)."/".next($route)."/".next($route);
-                if($menuRoute == $url){
-                    return true;
-                }
-            }
+        $model = new Menu();
+        if($model->checkUrl($url)){
+            $auth = true;
         }
         return $auth;
     }

@@ -3,6 +3,14 @@ namespace app\common\model;
 
 class Menu extends Base {
 
+    /**
+     * @param $value
+     * @return string
+     */
+    public function setDescriptionAttr($value){
+        return htmlentities($value);
+    }
+
     /*
      *登录用户权限菜单
      * */
@@ -19,7 +27,7 @@ class Menu extends Base {
                     $model = $model->field($fields);
                 }
             }
-            return $model->order('sort',"asc")->select();
+            return $model->order('sort',"desc")->select();
         }
         return null;
     }
@@ -114,9 +122,14 @@ class Menu extends Base {
                 }else{
                     $html .= '<a href="javascript:;">';
                 }
-                $html .= '<i class="'.$menu->icon.'"></i><span class="title">'.$menu->title.'</span>';
+                $html .= '<i class="'.$menu->icon.'"></i>';
+                if($pid == 0){
+                    $html .= '<span>'.$menu->title.'</span>';
+                }else{
+                    $html .= $menu->title;
+                }
                 if($childs > 0){
-                    $html .= '<i class="fa fa-angle-left pull-right"></i>';
+                    $html .= '<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>';
                 }
                 $html .='</a>';
                 $html = $this->getCategory($access ,$pids ,$current ,$menu->id ,$html);
@@ -173,10 +186,6 @@ class Menu extends Base {
         return ['html'=>$html,'h3'=>$h3];
     }
 
-    public function setDescriptionAttr($value){
-        return htmlentities($value);
-    }
-
     /*
      * 获取目录
      * */
@@ -196,5 +205,32 @@ class Menu extends Base {
              }
          }
          return $arr;
+    }
+
+    /**
+     * 根据路由判断是否有权限
+     * @param $url
+     * @return bool
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function checkUrl($url){
+        $res = false;
+        $url = trim($url);
+        if(!empty($url)){
+            $url = url($url);
+            $url = str_replace('.html','',$url);
+            $url = ltrim($url,'/');
+            $menu = $this->where('route','like',$url.'%')->find();
+            $role = User::where('id',session('login_id'))->find();
+            if(!empty($role->role->access) && !empty($menu)){
+                $access = explode(',',$role->role->access);
+                if(in_array($menu->id,$access)){
+                    $res = true;
+                }
+            }
+        }
+        return $res;
     }
 }

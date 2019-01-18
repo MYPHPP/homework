@@ -1,3 +1,3 @@
 <div class="box-footer">
-    <a class="btn btn-danger delall-confirm" data-url="{:url('delAll')}" href="javascript:;">批量删除</a>
+    {if checkPower(url('delAll'))}<a class="btn btn-danger delall-confirm" data-url="{:url('delAll')}" href="javascript:;">批量删除</a>{/if}
 </div>
