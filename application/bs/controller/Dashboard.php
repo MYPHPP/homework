@@ -5,7 +5,7 @@ use app\bs\Base;
 use think\Request;
 
 class Dashboard extends Base{
-    public function index(Request $request)
+    public function index()
     {
         return $this->fetch();
     }

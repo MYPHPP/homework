@@ -95,7 +95,7 @@ class Menu extends Base {
             ->select();
         if($menus->count() > 0){
             if($pid == 0){
-                $html .= '<ul class="sidebar-menu">';
+                $html .= '<ul class="sidebar-menu" data-widget="tree"><li class="header">目录列表</li>';
             }else{
                 $html .= '<ul class="treeview-menu">';
             }
@@ -123,75 +123,6 @@ class Menu extends Base {
                 $html .= '</li>';
             }
             $html .= '</ul>';
-        }
-        return $html;
-    }
-
-    public function getCategory1($access ,$pids ,$current=1 ,$pid=0 ,$html='')
-    {
-        $menus = $this->where('position',1)
-            ->where('pid',$pid)
-            ->whereIn('id',$access)
-            ->order('sort desc')
-            ->select();
-        if($menus->count() > 0){
-            if($pid == 0){
-                $html .= '<ul class="sidebar-menu">';
-            }else{
-                $html .= '<ul class="treeview-menu">';
-            }
-            foreach($menus as $menu){
-                if(in_array($menu->id,$pids) || $menu->id == $current){
-                    $html .= '<li class="active">';
-                }else{
-                    $html .= '<li class="">';
-                }
-                if(!empty($menu->route)){
-                    $html .= '<a href="'.url($menu->route).'">';
-                }else{
-                    $html .= '<a href="javascript:;">';
-                }
-                $html .= '<i class="'.$menu->icon.'"></i><span class="title">'.$menu->title.'</span>';
-                $childs = $this->where('pid',$menu->id)->where('position','=',1)->count();
-                if($childs > 0){
-                    $html .= '<i class="fa fa-angle-left pull-right"></i>';
-                }
-                $html .='</a>';
-                $html = $this->getCategory($access ,$pids ,$current ,$menu->id ,$html);
-                $html .= '</li>';
-            }
-            $html .= '</ul>';
-        }
-        return $html;
-    }
-
-    /*
-     * 左侧菜单栏(暂时废弃)
-     * */
-    public function getNav($ids,$pidArr,$visit,$pid=0,$level=0){
-        $html = '';
-        $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort")->select()->toArray();
-        if(!empty($menus)){
-            foreach($menus as $v){
-                $route = !empty($v['route']) ? url($v['route']) : "javascript:;";
-                $icon = isset($v['icon']) ? '<i class="'.$v['icon'].'"></i>' : '';
-                $routeArr = explode('/',strtolower($v['route']));
-                $menuRoute = current($routeArr)."/".next($routeArr)."/".next($routeArr);
-                $active = in_array($v['id'],$pidArr) || $menuRoute == $visit  ? "active" : '';
-                //$open = in_array($v['id'],$pidArr) ? "open" : '';
-                $open = $active == "active" ? "arrow open" : 'arrow ';
-                $left = empty($v['route']) || $this->where('pid',$v['id'])->where("position",1)->select()->count() > 0 ? '<span class="'.$open.' "></span>' : '<span class="selected">';
-                $html .= '<li class="'.$active.'"><a href="'.$route.'">'.$icon.'<sapn class="title">'.$v['title'].'</sapn>'.$left.'</a>';
-                $html .= $this->getNav($ids,$pidArr,$visit,$v['id'],$level+1);
-                $html .= "</li>";
-            }
-        }
-        if(!empty($html)){
-            if($level == 0){
-                $html = '<ul class="page-sidebar-menu"><li><div class="sidebar-toggler hidden-phone"></div></li>'.$html."</ul>";
-            }else{
-                $html = '<ul class="sub-menu">'.$html."</ul>";
-            }
         }
         return $html;
     }

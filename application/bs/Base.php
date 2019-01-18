@@ -6,6 +6,7 @@ use app\common\model\Role;
 use app\common\model\User;
 use think\cache\driver\Redis;
 use think\Controller;
+use think\facade\Env;
 use think\Request;
 use think\Validate;
 
@@ -56,7 +57,13 @@ class Base extends Controller {
     public function checkAuth(){
         $model = new User();
         $url = $this->module."/".$this->contrller."/".$this->method;
-        if(!$model->checkAuth($url)) $this->redirect('bs/index/abort');
+        if(!$model->checkAuth($url)){
+            if($this->request->isAjax()){
+                $this->error('没有改操作的权限');
+            }else{
+                $this->redirect('bs/index/abort');
+            }
+        }
         $userinfo = $model->getLoginInfo();
         $this->loginUserinfo = $userinfo;
         $this->assign("loginInfo",$userinfo);//登录用户信息
@@ -70,16 +77,16 @@ class Base extends Controller {
     /*
      * 列表页
      * */
-    public function index(Request $request){
+    public function index(){
         return $this->fetch();
     }
 
    /*
     * 添加页
     * */
-    public function add(Request $request){
-        if($request->isPost()){
-            $result=$this->checkData($request,$this->useModel,$this->choose);
+    public function add(){
+        if($this->request->isPost()){
+            $result=$this->checkData($this->request,$this->useModel,$this->choose);
             if($result['status'] != 200){
                 if(is_array($result['data'])){
                     $msg = implode('<br/>',$result['data']);
@@ -105,7 +112,59 @@ class Base extends Controller {
         return $this->fetch();
     }
 
-    public function edit(){
-        return $this->fetch('add');
+
+    /*
+     * 批量删除所选数据
+     * */
+    public function delAll(){
+        if($this->request->isAjax()){
+            try{
+                $file = Env::get('APP_PATH').'common/model/'.$this->useModel.'.php';
+                if(is_file($file)){
+                    $modelname = "\\app\\common\\model\\".$this->useModel;
+                }else{
+                    throw new \Exception('该模块模型不存在，请确认后重新提交');
+                }
+            }catch (\Exception $e){
+                return $this->error($e->getMessage());
+            }
+            $model = new $modelname;
+            $ids = $this->request->param('ids');
+            if($model->whereIn('id',$ids)->update(['delete_time' => time()])){
+                return $this->success('处理成功');
+            }else{
+                return $this->error('处理失败');
+            }
+        }
+    }
+
+    /**
+     * 删除选中的单条数据
+     */
+    public function delchoose(){
+        if($this->request->isAjax()){
+            try{
+                $file = Env::get('APP_PATH').'common/model/'.$this->useModel.'.php';
+                if(is_file($file)){
+                    $modelname = "\\app\\common\\model\\".$this->useModel;
+                }else{
+                    throw new \Exception('该模块模型不存在，请确认后重新提交');
+                }
+            }catch (\Exception $e){
+                return $this->error($e->getMessage());
+            }
+            $id = $this->request->param('id');
+            $model = new $modelname;
+            $data = $model->find($id);
+            if(!empty($data)){
+                if($data->delete()){
+                    $this->error('操作成功');
+                }else{
+                    $this->error('操作失败，请重试');
+                }
+            }else{
+                $this->error('请正确选择要处理的数据');
+            }
+        }
     }
 }

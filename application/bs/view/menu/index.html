@@ -2,76 +2,41 @@
 {block name="content"}
 <div class="row">
     <div class="col-xs-12">
-        <div class="box">
-            <div class="box-body table-responsive">
-                <table id="example2" class="table table-bordered table-hover">
+        <div class="box box-primary">
+            {include file='common/boxheader'}
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
-                        <th style="width: 10px"><input class="checkboxs" type="checkbox"></th>
-                        <th>Rendering engine</th>
-                        <th>Browser</th>
-                        <th>Platform(s)</th>
-                        <th>Engine version</th>
-                        <th>CSS grade</th>
+                        <th><input type="checkbox" class="minimal checkbox-master"></th>
+                        <th>标题</th>
+                        <th>路由</th>
+                        <th>创建时间</th>
+                        <th class="text-center">操作</th>
                     </tr>
                     </thead>
                     <tbody>
+                    {foreach $lists as $list}
                     <tr>
-                        <th><input class="cbox" type="checkbox" value="1"></th>
-                        <td>Tasman</td>
-                        <td>Internet Explorer 4.5</td>
-                        <td>Mac OS 8-9</td>
-                        <td>-</td>
-                        <td>X</td>
+                        <td><input class="minimal checkbox-son" type="checkbox" value="{$list.id}"></td>
+                        <td>{$list.title}</td>
+                        <td>{$list.route}</td>
+                        <td>{$list.create_time}</td>
+                        <td class="text-center">
+                            {include file='common/operate'}
+                        </td>
                     </tr>
-                    <tr>
-                        <th><input class="cbox" type="checkbox" value="1"></th>
-                        <td>Tasman</td>
-                        <td>Internet Explorer 5.1</td>
-                        <td>Mac OS 7.6-9</td>
-                        <td>1</td>
-                        <td>C</td>
-                    </tr>
-                    <tr>
-                        <th><input class="cbox" type="checkbox" value="1"></th>
-                        <td>Tasman</td>
-                        <td>Internet Explorer 5.2</td>
-                        <td>Mac OS 8-X</td>
-                        <td>1</td>
-                        <td>C</td>
-                    </tr>
-                    <tr>
-                        <th><input class="cbox" type="checkbox" value="1"></th>
-                        <td>Misc</td>
-                        <td>NetFront 3.1</td>
-                        <td>Embedded devices</td>
-                        <td>-</td>
-                        <td>C</td>
-                    </tr>
-                    <tr>
-                        <th><input class="cbox" type="checkbox" value="1"></th>
-                        <td>Misc</td>
-                        <td>NetFront 3.4</td>
-                        <td>Embedded devices</td>
-                        <td>-</td>
-                        <td>A</td>
-                    </tr>
+                    {/foreach}
                     </tbody>
                 </table>
-            </div><!-- /.box-body -->
-            <div class="box-footer clearfix">
-                <ul class="pagination pagination-sm no-margin pull-right">
-                    <li><a href="#">«</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">»</a></li>
-                </ul>
             </div>
-        </div><!-- /.box -->
+            <!-- /.box-body -->
+            {include file='common/boxfooter'}
+        </div>
+        <!-- /.box -->
     </div>
+    <!-- /.col -->
 </div>
-<script>
-    
-</script>
+<!-- /.row -->
 {/block}

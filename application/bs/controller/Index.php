@@ -8,9 +8,6 @@ use think\Validate;
 use app\common\model\Menu;
 
 class Index extends Controller{
-    protected $useModel = "User";
-    protected $choose = "default";
-
     /*
      * 不存在的路由的处理
      * */
@@ -57,8 +54,6 @@ class Index extends Controller{
                 $this->error('账号或密码错误');
             }
         }
-        $menu = $this->getMenu($this->useModel,$this->choose);
-        $this->assign('menus',$menu->{$this->choose});
         return $this->fetch('login');
     }
 
@@ -93,22 +88,7 @@ class Index extends Controller{
             $model->save($result['data']);
             $this->success('新加成功','bs/index/index');
         }
-        $menu = $this->getMenu($this->useModel,$this->choose);
-        $this->assign('menus',$menu->{$this->choose});
         return $this->fetch('register');
-    }
-
-    public function getMenu($modelname,$choose="default"){
-        $useModel = "\\app\\common\\model\\".$modelname;
-        $model = new $useModel;
-        $menus = $model->getCF($choose);
-        foreach($menus[$choose] as $key=>$menu){
-            if(empty($menu['name'])){
-                $menus[$choose][$key]['name'] = $key;
-            }
-        }
-        $result = array2obj($menus);
-        return $result;
     }
 
     public function checkData(Request $request,$useModel,$choose="default"){
