@@ -1,0 +1,7 @@
+<div class="box-header with-border">
+    {if checkPower(url('index'))}
+    <a class="btn btn-primary" href="{:url('index')}">返回列表</a>
+    {else/}
+    <a class="btn btn-primary" href="javascript :history.back(-1)">返回列表</a>
+    {/if}
+</div>

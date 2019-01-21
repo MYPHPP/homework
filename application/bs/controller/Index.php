@@ -67,66 +67,6 @@ class Index extends Controller{
     }
 
     /*
-     * 注册
-     * */
-    public function register(Request $request){
-        if($request->isPost()){
-            if(!isset($request->accept) || $request->accept != 1){
-                $this->error("还没接受注册协议");
-            }
-            $result = $this->checkData($request,$this->useModel,$this->choose);
-            if($result['status'] != 200){
-                if(is_array($result['data'])){
-                    $msg = implode(',',$result['data']);
-                }else{
-                    $msg = $result['data'];
-                }
-                $this->error($msg);
-            }
-            $modelname = "\\app\\common\\model\\".$this->useModel;
-            $model = new $modelname;
-            $model->save($result['data']);
-            $this->success('新加成功','bs/index/index');
-        }
-        return $this->fetch('register');
-    }
-
-    public function checkData(Request $request,$useModel,$choose="default"){
-        $rule = [];
-        $tipMsg = [];
-        $data = [];
-        $menus = $this->getMenu($useModel,$choose);
-        foreach ($menus->{$choose} as $menu){
-            if(isset($request->{$menu->name})){
-                //查找验证规则
-                if(!empty($menu->validate)){
-                    $rule[$menu->name] = $menu->validate->rule;
-                    $tips = explode('|',$menu->validate->rule);
-                    foreach ($tips as $tip){
-                        if(strrpos($tip,':')){
-                            $tip = substr($tip,0,strrpos($tip,':'));
-                        }
-                        $tipMsg[$menu->name.".".$tip] = $menu->validate->{$menu->name.".".$tip};
-                    }
-                }
-                if(is_array($request->{$menu->name})){
-                    $request->{$menu->name} = implode(",",$request->{$menu->name});
-                }
-                $data[$menu->name] = filterChar($request->{$menu->name});
-            }
-        }
-        $result = ['status'=>200,'data'=>$data];
-        if(!empty($rule)){
-            //$validate = Validate::make($rule,$tipMsg)->batch();//批量验证
-            $validate = Validate::make($rule,$tipMsg);//单个验证
-            if(!$validate->check($data)){
-                $result = ['status' => 301,'data'=>$validate->getError()];
-            }
-        }
-        return $result;
-    }
-
-    /*
      * 登录成功页面跳转
      * */
     public function loginJump(){

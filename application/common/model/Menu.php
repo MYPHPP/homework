@@ -1,6 +1,8 @@
 <?php
 namespace app\common\model;
 
+use app\common\validate\Menu as validateMenu;
+
 class Menu extends Base {
 
     /**
@@ -99,7 +101,7 @@ class Menu extends Base {
         $menus = $this->where('position',1)
             ->where('pid',$pid)
             ->whereIn('id',$access)
-            ->order('sort desc')
+            ->order('sort asc')
             ->select();
         if($menus->count() > 0){
             if($pid == 0){
@@ -122,7 +124,7 @@ class Menu extends Base {
                 }else{
                     $html .= '<a href="javascript:;">';
                 }
-                $html .= '<i class="'.$menu->icon.'"></i>';
+                $html .= '<i class="fa '.$menu->icon.'"></i>';
                 if($pid == 0){
                     $html .= '<span>'.$menu->title.'</span>';
                 }else{
@@ -172,7 +174,7 @@ class Menu extends Base {
                     $h3 = $menu['title'];
                 }
                 $childs = $this->where('pid',$pid)->select()->count();
-                $icon = !empty($menu['icon']) && $key == 0 ? '<i class="'.$menu['icon'].'"></i>' : "";
+                $icon = !empty($menu['icon']) && $key == 0 ? '<i class="fa '.$menu['icon'].'"></i>' : "";
                 $right = $childs > 0 ? '<i class="icon-angle-right"></i>' : "";
                 $href = !empty($menu['route']) ? url($menu['route']) : "javascript:;";
                 $html .= '<li>'.$icon.'<a href="'.$href.'">'.$menu['title'].'</a>'.$right.'</li>';
@@ -190,17 +192,17 @@ class Menu extends Base {
      * 获取目录
      * */
     public function getMenu($pid=0,$arr=array(),$level=0){
-        $menus = $this->where("pid",$pid)->field("id,title")->order('sort')->select()->toArray();
-         if(!empty($menus)){
+        $menus = $this->where("pid",$pid)->field("id,title")->order('sort')->select();
+         if($menus->count() > 0){
              foreach ($menus as $k=>$v){
-                 if(!empty($v['title'])){
+                 if(!empty($v->title)){
                      $prefix = '';
                      for($i=1;$i<=$level;$i++){
-                         $prefix .= "|-";
+                         $prefix .= "|- ";
                      }
-                     $v['title'] = $prefix.$v['title'];
+                     $v->title = $prefix.$v->title;
                      $arr[] = $v;
-                     $arr = $this->getMenu($v['id'],$arr,$level+1);
+                     $arr = $this->getMenu($v->id,$arr,$level+1);
                  }
              }
          }
@@ -232,5 +234,15 @@ class Menu extends Base {
             }
         }
         return $res;
+    }
+
+    public function validateData($data){
+        $return = ['status'=>true];
+        $model = new validateMenu();
+        if(!$model->batch()->check($data)){
+            $return['status'] = false;
+            $return['msg'] = implode(' | ',$model->getError());
+        }
+        return $return;
     }
 }

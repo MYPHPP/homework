@@ -106,6 +106,7 @@ function ajaxConfirm(tips,data,url,type="POST",datatype="json"){
 
 $(function () {
     IcheckBox.initIcheckBox();
+    $('.select2').select2();
     $('.delall-confirm').on('click',function () {
         var tips = '是否确认批量删除？';
         var url = $(this).attr('data-url');
@@ -133,5 +134,35 @@ $(function () {
         }
         var data = {id:id};
         ajaxConfirm(tips,data,url);
+    });
+    $('.ajaxForm').on('submit',function () {
+        event.preventDefault();
+        layer.msg('正在提交，请稍候…', {icon: 16, time: 0, shade: [0.3, "#000"]});
+        var form_action = $(this).attr('action');
+        var form_method = $(this).attr('method');
+        var form_data = new FormData($(this)[0]);
+        $.ajax({
+            url: form_action,
+            dataType: 'json',
+            type: form_method,
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                var code = result.code ? result.code : 2;
+                layer.msg(result.msg,{icon:code});
+                if(code == 1){
+                    setTimeout("location.reload();", 1000);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                console.log('%csubmit fail!', ';color:#dd4b39');
+                console.log("type:" + type + ",readyState:" + xhr.readyState + ",status:" + xhr.status);
+                console.log("url:" + form_action);
+                console.log("data:" + form_data);
+                layer.msg('访问错误,代码'+xhr.status,{icon:2});
+            }
+        });
     });
 });
