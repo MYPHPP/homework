@@ -1,4 +1,4 @@
-{if checkPower(url('edit'))}<a class="btn-xs btn-primary" href="{:url('edit')}"><i class="fa fa-pencil"></i></a>{/if}
-{if checkPower(url('delchoose'))}
+{if checkPower(url('edit'),4)}<a class="btn-xs btn-primary" href="{:url('edit',['id'=>$list['id']])}"><i class="fa fa-pencil"></i></a>{/if}
+{if checkPower(url('delchoose'),4)}
     <a class="btn-xs btn-danger choose-del" data-id='{$list.id}' data-url="{:url('delchoose')}" href="javascript:;"><i class="fa fa-trash"></i></a>
 {/if}

@@ -1,3 +1,4 @@
 <div class="box-header">
-    {if checkPower(url('add'))}<a class="btn btn-primary" href="{:url('add')}">新增</a>{/if}
+    {if checkPower(url('add'),2)}<a class="btn btn-primary" href="{:url('add')}">新增</a> {/if}
+    {if checkPower(url('delAll'),2)}<a class="btn btn-danger delall-confirm" data-url="{:url('delAll')}" href="javascript:;">批量删除</a>{/if}
 </div>

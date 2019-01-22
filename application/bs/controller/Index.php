@@ -21,7 +21,7 @@ class Index extends Controller{
      * */
     public function abort($type = 404){
         cookie("ms_currentUrl",null);
-        return $this->fetch('error/'.$type);
+        return $this->fetch('/'.$type);
     }
 
     /*

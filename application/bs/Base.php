@@ -4,11 +4,9 @@ namespace app\bs;
 use app\common\model\Menu;
 use app\common\model\Role;
 use app\common\model\User;
-use think\cache\driver\Redis;
 use think\Controller;
 use think\facade\Env;
 use think\Request;
-use think\Validate;
 
 class Base extends Controller {
     protected $module;

@@ -34,9 +34,11 @@ class Menu extends Validate
     // 自定义验证规则
     protected function checkRoute($value,$rule)
     {
+        $res = true;
         if(!empty($value)){
-            $rules = explode('/',$rule);
-            if(count($rules) != 3) return '路由格式错误';
+            $rules = explode('/',$value);
+            if(count($rules) < 3) return '路由格式错误';
         }
+        return $res;
     }
 }

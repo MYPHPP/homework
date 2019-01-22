@@ -43,8 +43,21 @@ class User extends Model{
      * */
     public function checkAuth($url){
         $auth = false;
-        $model = new Menu();
-        if($model->checkUrl($url)){
+        $url = trim($url);
+        if(!empty($url)){
+            $url = url($url);
+            $url = str_replace('.html','',$url);
+            $url = ltrim($url,'/');
+            $menu = Menu::where('route','like',$url.'%')->find();
+            $role = $this->where('id',session('login_id'))->find();
+            if(!empty($role->role->access) && !empty($menu)){
+                $access = explode(',',$role->role->access);
+                if(in_array($menu->id,$access)){
+                    $auth = true;
+                }
+            }
+        }
+        if(strpos(strtolower($url),'noaction')){
             $auth = true;
         }
         return $auth;

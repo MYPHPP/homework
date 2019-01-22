@@ -1,0 +1,61 @@
+{extend name="app" /}
+{block name="content"}
+<!-- fonticonpicker -->
+<link rel="stylesheet" href="/asset/plugins/iconpicker/css/iconpicker.min.css">
+<script src="/asset/plugins/iconpicker/js/iconpicker.min.js"></script>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            {include file='common/backlist'}
+            <form role="form" class="ajaxForm" method="post" enctype="multipart/form-data">
+                <div class="box-body">
+                    <div class="form-group  col-xs-6">
+                        <label>父级菜单</label>
+                        <select name="pid" class="form-control select2">
+                            <option value="0">一级菜单</option>
+                            {foreach $menus as $menu}
+                            <option value="{$menu.id}" {if $data.pid eq $menu.id}selected{/if}>{$menu.title}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label>菜单位置 <span class="text-red">*</span></label>
+                        <select class="form-control" id="position" name="position">
+                            <option value="">选择菜单位置</option>
+                            {foreach $options as $op=>$option}
+                            <option value="{$op}" {if $data.position eq $op}selected{/if}>{$option}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="icon">图标 <i class="fa {$data.icon}"></i></label>
+                        <input maxlength="30" id="icon" name="icon" value="{$data.icon}" class="form-control  iconpicker-element iconpicker-input" placeholder="请输入图标class">
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="title">标题 <span class="text-red">*</span></label>
+                        <input name="title" value="{$data.title}" type="text" class="form-control" id="title" placeholder="请输入标题" required>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="route">路由 <span class="text-gray">路由规则：模块/控制器/方法(eg:bs/menu/add)</span></label>
+                        <input name="route" value="{$data.route}" type="text" class="form-control" id="route" placeholder="请输入路由">
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label for="sort">排序 <span class="text-gray">数字越小越靠前</span></label>
+                        <input value="0" value="{$data.sort}" name="sort" type="text" class="form-control" id="sort">
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer text-center">
+                    <button type="reset" class="btn btn-primary">重置</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#icon').iconpicker({placement: 'bottomLeft'});
+    })
+</script>
+{/block}

@@ -212,19 +212,20 @@ class Menu extends Base {
     /**
      * 根据路由判断是否有权限
      * @param $url
+     * @param $site
      * @return bool
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function checkUrl($url){
+    public function checkUrl($url ,$site=1){
         $res = false;
         $url = trim($url);
         if(!empty($url)){
             $url = url($url);
             $url = str_replace('.html','',$url);
             $url = ltrim($url,'/');
-            $menu = $this->where('route','like',$url.'%')->find();
+            $menu = $this->where('position','=',$site)->where('route','like',$url.'%')->find();
             $role = User::where('id',session('login_id'))->find();
             if(!empty($role->role->access) && !empty($menu)){
                 $access = explode(',',$role->role->access);
@@ -244,5 +245,31 @@ class Menu extends Base {
             $return['msg'] = implode(' | ',$model->getError());
         }
         return $return;
+    }
+
+    public function getShowList(){
+        $data = [];
+        $pmenu = $this->where('pid','=',0)->select();
+        if(!empty($pmenu)){
+            foreach($pmenu as $menu){
+                $menu->parentTitle = '一级目录';
+                $data[] = $menu;
+                $arr = $this->getChildMenu($menu->id ,$menu->title);
+                $data = array_merge($data,$arr);
+            }
+        }
+        return $data;
+    }
+
+    public function getChildMenu($pid ,$title ,$arr=[]){
+        $menu = $this->where('pid','=',$pid)->order('sort asc')->select();
+        if($menu->count()){
+            foreach($menu as $m){
+                $m->parentTitle = $title;
+                $arr[] = $m;
+                $arr = $this->getChildMenu($m->id ,$m->title ,$arr);
+            }
+        }
+        return $arr;
     }
 }
