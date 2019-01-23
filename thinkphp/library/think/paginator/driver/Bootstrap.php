@@ -195,7 +195,7 @@ class Bootstrap extends Paginator
                 );
             } else {
                 return sprintf(
-                    '<ul class="pagination">%s %s %s %s %s</ul>',
+                    '<ul class="pagination pagination-sm no-margin pull-right">%s %s %s %s %s</ul>',
                     $this->getFirstButton(),
                     $this->getPreviousButton(),
                     $this->getLinks(),

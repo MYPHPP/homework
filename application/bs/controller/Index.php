@@ -71,13 +71,13 @@ class Index extends Controller{
      * */
     public function loginJump(){
         $url = 'bs/index/abort';
-        if(empty(cookie('currentUrl'))){
+        if(empty(cookie('ms_currentUrl'))){
             $menus = Menu::getUserMenu("route");
             if(!empty($menus) && $menus->count() > 0){
                 $url = $this->chooseUrl($menus);
             }
         }else{
-            $url = cookie('currentUrl');
+            $url = cookie('ms_currentUrl');
         }
         return $url;
     }

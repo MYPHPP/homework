@@ -9,29 +9,36 @@ class Menu extends Base {
     public function index()
     {
         $model = new Menus();
-//        $param['query']['position'] = 1;
-//        $website=['num'=>1,'page_site'=>$param];
-//        $list = $model->getList($website);
-//        $this->assign([
-//            'lists'     => $list,
-//            'total'     => $list->total(),
-//            'page'      => $list->render()
-//        ]);
-        $length = 10;
-        $offet = $this->request->param('page','1');
-        $offet = intval($offet);
-        if($offet < 1){
-            $offet = 1;
-        }
-        $offet = ($offet-1)*$length;
-        $data = $model->getShowList();
-        $total = count($data);
-        $list = array_slice($data,$offet,$length);
+        $param['query']['position'] = 1;
+        $website=['num'=>1,'page_site'=>$param];
+        $list = $model->getList($website)->each(function ($item) use ($model){
+            $parentTitle = $model->find($item['pid']);
+            if(!empty($parentTitle)){
+                $item['parentTitle'] = $parentTitle->title;
+            }else{
+                $item['parentTitle'] = '一级菜单';
+            }
+        });
         $this->assign([
             'lists'     => $list,
-            'total'     => $total,
-            'page'     => $this->menuPage($length,$total)
+            'total'     => $list->total(),
+            'page'      => $list->render()
         ]);
+//        $length = 1;
+//        $offet = $this->request->param('page','1');
+//        $offet = intval($offet);
+//        if($offet < 1){
+//            $offet = 1;
+//        }
+//        $offet = ($offet-1)*$length;
+//        $data = $model->getShowList();
+//        $total = count($data);
+//        $list = array_slice($data,$offet,$length);
+//        $this->assign([
+//            'lists'     => $list,
+//            'total'     => $total,
+//            'page'     => $this->menuPage($length,$total)
+//        ]);
         return $this->fetch();
     }
 
@@ -135,7 +142,7 @@ class Menu extends Base {
                 $link = $this->getLinkPage($page,$page - $space +1,$page + $space -1,$param);
             }
         }
-        return sprintf('<ul class="pagination">%s %s %s %s %s</ul>', $first, $prev, $link, $next, $end);
+        return sprintf('<ul class="pagination pagination-sm no-margin pull-right">%s %s %s %s %s</ul>', $first, $prev, $link, $next, $end);
     }
 
     public function getLinkPage($page,$start ,$end, $url){

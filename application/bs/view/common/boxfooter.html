@@ -1,4 +1,23 @@
 <div class="box-footer">
     {if checkPower(url('delAll'),3)}<a class="btn btn-danger delall-confirm" data-url="{:url('delAll')}" href="javascript:;">批量删除</a>{/if}
-    {if !empty($page)}{$page|raw}{/if}
+    {if !empty($page)}
+        {$page|raw}
+    <label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
+        {if isset($total)}
+        <small>共{$total}条记录</small>
+        &nbsp;
+        {/if}
+        <small>每页显示</small>
+        &nbsp;
+        <select class="input-sm" onchange="">
+            <option value="10" >10</option>
+            <option value="20" >20</option>
+            <option value="30" >30</option>
+            <option value="50" >50</option>
+            <option value="100">100</option>
+        </select>
+        &nbsp;
+        <small>条记录</small>
+    </label>
+    {/if}
 </div>
