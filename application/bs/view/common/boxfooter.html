@@ -9,12 +9,12 @@
         {/if}
         <small>每页显示</small>
         &nbsp;
-        <select class="input-sm" onchange="">
-            <option value="10" >10</option>
-            <option value="20" >20</option>
-            <option value="30" >30</option>
-            <option value="50" >50</option>
-            <option value="100">100</option>
+        <select data-url="{:url('bs/index/setPageRow')}" class="input-sm" onchange="changePageRows(this)">
+            <option value="10" {if $pagerow==10}selected{/if}>10</option>
+            <option value="20" {if $pagerow==20}selected{/if}>20</option>
+            <option value="30" {if $pagerow==30}selected{/if}>30</option>
+            <option value="50" {if $pagerow==50}selected{/if}>50</option>
+            <option value="100"{if $pagerow==100}selected{/if}>100</option>
         </select>
         &nbsp;
         <small>条记录</small>

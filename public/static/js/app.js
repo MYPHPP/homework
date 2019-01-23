@@ -104,6 +104,39 @@ function ajaxConfirm(tips,data,url,type="POST",datatype="json"){
     });
 }
 
+function changePageRows(t){
+    var val = $(t).val();
+    var url = $(t).attr('data-url');
+    $.post(url,{row:val},function (res,status) {
+        window.location.reload();
+    });
+}
+
+/*设置cookie*/
+function setCookie(key,value,t)
+{
+    var oDate=new Date();
+    oDate.setDate(oDate.getDate()+t);
+    document.cookie=key+"="+value+"; expires="+oDate.toDateString()+"; path=/";
+}
+
+/*获取cookie*/
+function getCookie(key){
+    var arr1=document.cookie.split("; ");
+    for(var i=0;i<arr1.length;i++){
+        var arr2=arr1[i].split("=");
+        if(arr2[0]==key){
+            return decodeURI(arr2[1]);
+        }
+    }
+}
+
+
+//封装一个移除cookie的函数
+function removeCookie(key){
+    setCookie(key,"",-1);//把cookie设置为过期
+}
+
 $(function () {
     IcheckBox.initIcheckBox();
     $('.select2').select2();

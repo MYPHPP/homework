@@ -14,7 +14,6 @@ class Base extends Controller {
     protected $contrller;
     protected $useModel;
     protected $request;
-    protected $choose = "default";
     protected $loginUserinfo;
 
     public function __construct(Request $request)
@@ -35,6 +34,7 @@ class Base extends Controller {
             echo $html;die;
         }
         $this->assign("logoLink",Menu::getLogoLink());
+        $this->assign('pagerow', cookie('ms_pagerow') ? cookie('ms_pagerow') : 10);
     }
 
     /*
@@ -75,45 +75,6 @@ class Base extends Controller {
         $this->assign("nav",$menuModel->getCategory($this->loginUserinfo->role->access,$pids,$menuid));//左侧菜单
         $this->assign('tab',$menuModel->getTab($pids,$menuid));//内容导航栏
     }
-
-    /*
-     * 列表页
-     * */
-    public function index(){
-        return $this->fetch();
-    }
-
-   /*
-    * 添加页
-    * */
-    public function add(){
-        if($this->request->isPost()){
-            $result=$this->checkData($this->request,$this->useModel,$this->choose);
-            if($result['status'] != 200){
-                if(is_array($result['data'])){
-                    $msg = implode('<br/>',$result['data']);
-                }else{
-                    $msg = $result['data'];
-                }
-                $this->error($msg);
-            }
-            $modelname = "\\app\\common\\model\\".$this->useModel;
-            $model = new $modelname;
-            $result['data']['create_by'] = session("login_id");
-            $result['data']['update_by'] = session("login_id");
-            $model->save($result['data']);
-            $role = Role::get(1);
-            if(!empty($role)){
-                $role->access = $role->access.",".$model->id;
-                $role->save();
-            }else{
-                Role::create(['title'=>'超级管理员',"access"=>"1,2,3,4"]);
-            }
-            $this->success('新加成功',null,'',1);
-        }
-        return $this->fetch();
-    }
-
 
     /*
      * 批量删除所选数据

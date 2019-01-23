@@ -92,4 +92,15 @@ class Index extends Controller{
         }
         return '';
     }
+
+    public function setPageRow(Request $request){
+        if($request->isAjax()){
+            $num = $request->param('row');
+            $num = intval($num);
+            if(!in_array($num,[10,20,30,50,100])){
+                $num = 10;
+            }
+            cookie('ms_pagerow',$num);
+        }
+    }
 }
