@@ -92,7 +92,7 @@ function ajaxConfirm(tips,data,url,type="POST",datatype="json"){
             success:function (e) {
                 if(e.code == 1){
                     layer.msg(e.msg,{icon:1});
-
+                    setTimeout("location.reload();", 1000);
                 }else{
                     layer.msg(e.msg,{icon:2});
                 }

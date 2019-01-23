@@ -29,7 +29,11 @@ class Base extends Controller {
         $this->method = strtolower($request->action());
         $this->useModel = ucfirst($this->contrller);
         $this->checkLogin();
-        $this->checkAuth();
+        $auth = $this->checkAuth();
+        if(false === $auth){
+            $html = file_get_contents(Env::get('app_path').'bs/view/404.html');
+            echo $html;die;
+        }
         $this->assign("logoLink",Menu::getLogoLink());
     }
 
@@ -59,7 +63,7 @@ class Base extends Controller {
             if($this->request->isAjax()){
                 $this->error('没有改操作的权限');
             }else{
-                $this->redirect('bs/index/abort');
+                return false;
             }
         }
         $userinfo = $model->getLoginInfo();
@@ -128,10 +132,14 @@ class Base extends Controller {
             }
             $model = new $modelname;
             $ids = $this->request->param('ids');
-            if($model->whereIn('id',$ids)->update(['delete_time' => time()])){
-                return $this->success('处理成功');
+            if(!empty($ids)){
+                if($model->whereIn('id',$ids)->update(['delete_time' => time()])){
+                    $this->success('处理成功');
+                }else{
+                    $this->error('处理失败');
+                }
             }else{
-                return $this->error('处理失败');
+                $this->error('请选择数据');
             }
         }
     }
@@ -149,14 +157,14 @@ class Base extends Controller {
                     throw new \Exception('该模块模型不存在，请确认后重新提交');
                 }
             }catch (\Exception $e){
-                return $this->error($e->getMessage());
+                $this->error($e->getMessage());
             }
             $id = $this->request->param('id');
             $model = new $modelname;
             $data = $model->find($id);
             if(!empty($data)){
                 if($data->delete()){
-                    $this->error('操作成功');
+                    $this->success('操作成功');
                 }else{
                     $this->error('操作失败，请重试');
                 }

@@ -57,9 +57,6 @@ class User extends Model{
                 }
             }
         }
-        if(strpos(strtolower($url),'noaction')){
-            $auth = true;
-        }
         return $auth;
     }
 

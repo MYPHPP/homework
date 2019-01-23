@@ -9,36 +9,36 @@ class Menu extends Base {
     public function index()
     {
         $model = new Menus();
-        $param['query']['position'] = 1;
-        $website=['num'=>1,'page_site'=>$param];
-        $list = $model->getList($website)->each(function ($item) use ($model){
-            $parentTitle = $model->find($item['pid']);
-            if(!empty($parentTitle)){
-                $item['parentTitle'] = $parentTitle->title;
-            }else{
-                $item['parentTitle'] = '一级菜单';
-            }
-        });
-        $this->assign([
-            'lists'     => $list,
-            'total'     => $list->total(),
-            'page'      => $list->render()
-        ]);
-//        $length = 1;
-//        $offet = $this->request->param('page','1');
-//        $offet = intval($offet);
-//        if($offet < 1){
-//            $offet = 1;
-//        }
-//        $offet = ($offet-1)*$length;
-//        $data = $model->getShowList();
-//        $total = count($data);
-//        $list = array_slice($data,$offet,$length);
+//        $param['query']['position'] = 1;
+//        $website=['num'=>1,'page_site'=>$param];
+//        $list = $model->getList($website)->each(function ($item) use ($model){
+//            $parentTitle = $model->find($item['pid']);
+//            if(!empty($parentTitle)){
+//                $item['parentTitle'] = $parentTitle->title;
+//            }else{
+//                $item['parentTitle'] = '一级菜单';
+//            }
+//        });
 //        $this->assign([
 //            'lists'     => $list,
-//            'total'     => $total,
-//            'page'     => $this->menuPage($length,$total)
+//            'total'     => $list->total(),
+//            'page'      => $list->render()
 //        ]);
+        $length = 10;
+        $offet = $this->request->param('page','1');
+        $offet = intval($offet);
+        if($offet < 1){
+            $offet = 1;
+        }
+        $offet = ($offet-1)*$length;
+        $data = $model->getShowList();
+        $total = count($data);
+        $list = array_slice($data,$offet,$length);
+        $this->assign([
+            'lists'     => $list,
+            'total'     => $total,
+            'page'     => $this->menuPage($length,$total)
+        ]);
         return $this->fetch();
     }
 
@@ -155,5 +155,36 @@ class Menu extends Base {
             $html .= '<li class="'.$active.'"><a href="' . htmlentities($url) . 'page=' .$i. '"><sapn>' . $i . '</sapn></a></li>';
         }
         return $html;
+    }
+
+    public function delAll(){
+        $ids = $this->request->param('ids');
+        if(!empty($ids)){
+            $pids = Menus::whereIn('id',$ids)->where('pid',0)->column('id');
+            if(!empty($pids)){
+                foreach($pids as $pid){
+                    $dids = $this->getChildIds($pid);
+                    if(!empty($dids)){
+                        foreach($dids as $did){
+                            Menus::destroy($did);
+                        }
+                    }
+                }
+            }
+        }
+        parent::delAll();
+    }
+
+    public function getChildIds($pid,$ids=[]){
+        if(intval($pid) > 0){
+            $childs = Menus::where('pid','=',$pid)->column('id');
+            if(!empty($childs)){
+                foreach($childs as $child){
+                    $ids[] = $child;
+                    $ids = $this->getChildIds($child,$ids);
+                }
+            }
+        }
+        return $ids;
     }
 }
