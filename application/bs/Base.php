@@ -2,7 +2,6 @@
 namespace app\bs;
 
 use app\common\model\Menu;
-use app\common\model\Role;
 use app\common\model\User;
 use think\Controller;
 use think\facade\Env;
@@ -15,6 +14,7 @@ class Base extends Controller {
     protected $useModel;
     protected $request;
     protected $loginUserinfo;
+    protected $pageRowNum;
 
     public function __construct(Request $request)
     {
@@ -33,8 +33,10 @@ class Base extends Controller {
             $html = file_get_contents(Env::get('app_path').'bs/view/404.html');
             echo $html;die;
         }
+        $pagenum = cookie('ms_pagerow') ? cookie('ms_pagerow') : 10;
+        $this->pageRowNum = $pagenum;
         $this->assign("logoLink",Menu::getLogoLink());
-        $this->assign('pagerow', cookie('ms_pagerow') ? cookie('ms_pagerow') : 10);
+        $this->assign('pagerow', $pagenum);
     }
 
     /*
