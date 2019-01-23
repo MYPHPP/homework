@@ -26,7 +26,7 @@ class Bootstrap extends Paginator
     {
         $button = '';
         $mix = ceil($this->shownum / 2);
-        if($this->currentPage() > $mix){
+        if($this->currentPage() > $mix && $this->lastPage > $this->shownum){
             $url = $this->url(1);
             $button = $this->getPageLinkWrapper($url, $text);
         }
@@ -43,8 +43,8 @@ class Bootstrap extends Paginator
         $button = '';
         $mix = ceil($this->shownum / 2);
         $num = $this->lastPage - $mix;
-        if($this->currentPage() <= $num){
-            $url = $this->url(1);
+        if($this->currentPage() <= $num && $this->lastPage > $this->shownum){
+            $url = $this->url($this->lastPage);
             $button = $this->getPageLinkWrapper($url, $text);
         }
         return $button;
@@ -101,17 +101,17 @@ class Bootstrap extends Paginator
             'last'   => null,
         ];
 
-        $side   = $this->shownum;
-        $window = ceil($side / 2);
+        $window = ceil($this->shownum / 2);
+        $space = floor($this->shownum / 2);
 
-        if($this->lastPage < $side){
+        if($this->lastPage < $this->shownum){
             $block['slider'] = $this->getUrlRange(1, $this->lastPage);
         }elseif($this->currentPage <= $window){
-            $block['slider'] = $this->getUrlRange(1, $side);
+            $block['slider'] = $this->getUrlRange(1, $this->shownum);
         }elseif($this->currentPage > $this->lastPage - $window){
-            $block['slider'] = $this->getUrlRange($this->lastPage - $side + 1, $this->lastPage);
+            $block['slider'] = $this->getUrlRange($this->lastPage - $this->shownum + 1, $this->lastPage);
         }else{
-            $block['slider'] = $this->getUrlRange($this->currentPage - $window + 1, $this->currentPage + $window - 1);
+            $block['slider'] = $this->getUrlRange($this->currentPage - $space, $this->currentPage + $space);
         }
 
         $html = '';

@@ -9,14 +9,28 @@ class Menu extends Base {
     public function index()
     {
         $model = new Menus();
-        $list = $model->getList();
-//        $data = $model->getShowList();
-//        $total = count($data);
-//        $list = array_slice($data,0,3);
+//        $param['query']['position'] = 1;
+//        $website=['num'=>1,'page_site'=>$param];
+//        $list = $model->getList($website);
+//        $this->assign([
+//            'lists'     => $list,
+//            'total'     => $list->total(),
+//            'page'      => $list->render()
+//        ]);
+        $length = 10;
+        $offet = $this->request->param('page','1');
+        $offet = intval($offet);
+        if($offet < 1){
+            $offet = 1;
+        }
+        $offet = ($offet-1)*$length;
+        $data = $model->getShowList();
+        $total = count($data);
+        $list = array_slice($data,$offet,$length);
         $this->assign([
             'lists'     => $list,
-            'total'     => $list->total(),
-            'page'      => $list->render()
+            'total'     => $total,
+            'page'     => $this->menuPage($length,$total)
         ]);
         return $this->fetch();
     }
@@ -68,13 +82,71 @@ class Menu extends Base {
     }
 
     public function menuPage($limit,$total){
-        $html = '';
-        $page = ceil($total/$limit);
-        if($page > 1){
-            $html .= '';
+        $gets = $this->request->get();
+        $url = $this->request->baseUrl();
+        $param= '';
+        $page = 1;
+        if(isset($gets['page'])){
+            $page = intval($gets['page']) > 0 ? intval($gets['page']) : 1;
+            unset($gets['page']);
         }
-        for($i=1;$i<=$page;$i++){
+        if(!empty($gets)){
+            $param .= '?'.http_build_query($gets,null,'&');
+            $param .= '&';
+        }
 
+        $num = 5;
+        $space = ceil($num/2);
+        $totalPage = ceil($total/$limit);
+        $first = '';
+        $prev = '';
+        $next = '';
+        $end = '';
+        $link = '';
+        if($totalPage > 1){
+            if(!empty($param)){
+                $param = $url.$param;
+            }else{
+                $param = $url.'?';
+            }
+            if($page>1){
+                $prevpage = $page-1;
+                $prev = '<li><a href="' . htmlentities($param). 'page=' . $prevpage . '"><sapn>上一页</sapn></a></li>';
+            }
+            if($page < $totalPage){
+                $nextpage = $page+1;
+                $next = '<li><a href="' . htmlentities($param). 'page='  . $nextpage . '"><sapn>下一页</sapn></a></li>';
+            }
+            if($totalPage > $num){
+                if($page > $space){
+                    $first = '<li><a href="' . htmlentities($param). 'page='  . '1"><sapn>首页</sapn></a></li>';
+                }
+                if($page <= $totalPage-$space){
+                    $end = '<li><a href="' . htmlentities($param). 'page='  . $totalPage . '"><sapn>尾页</sapn></a></li>';
+                }
+            }
+            if($totalPage < $num){
+                $link = $this->getLinkPage($page,1,$totalPage,$param);
+            }elseif($page < $space){
+                $link = $this->getLinkPage($page,1,$num,$param);
+            }elseif($page > $totalPage-$space){
+                $link = $this->getLinkPage($page,$totalPage-$num+1,$totalPage,$param);
+            }else{
+                $link = $this->getLinkPage($page,$page - $space +1,$page + $space -1,$param);
+            }
         }
+        return sprintf('<ul class="pagination">%s %s %s %s %s</ul>', $first, $prev, $link, $next, $end);
+    }
+
+    public function getLinkPage($page,$start ,$end, $url){
+        $html = '';
+        for($i=$start ;$i<=$end ;$i++){
+            $active = '';
+            if($page == $i){
+                $active = 'active';
+            }
+            $html .= '<li class="'.$active.'"><a href="' . htmlentities($url) . 'page=' .$i. '"><sapn>' . $i . '</sapn></a></li>';
+        }
+        return $html;
     }
 }
