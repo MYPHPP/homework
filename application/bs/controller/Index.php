@@ -4,7 +4,6 @@ namespace app\bs\controller;
 use app\common\model\User;
 use think\Controller;
 use think\Request;
-use think\Validate;
 use app\common\model\Menu;
 
 class Index extends Controller{
@@ -37,13 +36,16 @@ class Index extends Controller{
                 $this->error("信息填写不完整");
             }
             $request->name = filterChar($request->name);
-            $user = $model->where(['name'=>$request->name,'passwd'=>md5(md5(trim($request->passwd)))])->field('id,name,passwd')->find();
+            $user = $model->where(['name'=>$request->name])->field('id,name,passwd')->find();
             if(!empty($user)){
-                session('login_id',$user['id']);
-                session('login_pwd',$user['passwd']);
+                if($user->passwd['change'] != $request->passwd){
+                    $this->error('密码错误!');
+                }
+                session('login_id',$user->id);
+                session('login_pwd',$user->passwd['original']);
                 if(!empty($request->remember)){
-                    cookie("ms_login_id",$user['id'],7*86400);
-                    cookie("ms_login_pwd",$user['passwd'],7*86400);
+                    cookie("ms_login_id",$user->id,7*86400);
+                    cookie("ms_login_pwd",$user->passwd['original'],7*86400);
                 }
                 if(!empty(cookie("ms_currentUrl"))){
                     return redirect(cookie("ms_currentUrl"));
@@ -51,7 +53,7 @@ class Index extends Controller{
                     return redirect($this->loginJump());
                 }
             }else{
-                $this->error('账号或密码错误');
+                $this->error('用户不存在!');
             }
         }
         return $this->fetch('login');
@@ -97,10 +99,10 @@ class Index extends Controller{
         if($request->isAjax()){
             $num = $request->param('row');
             $num = intval($num);
-            if(!in_array($num,[10,20,30,50,100])){
+            if(!in_array($num,Config('setting.page'))){
                 $num = 10;
             }
-            cookie('ms_pagerow',$num);
+            cookie('pr_pagerow',$num);
         }
     }
 }

@@ -33,10 +33,11 @@ class Base extends Controller {
             $html = file_get_contents(Env::get('app_path').'bs/view/404.html');
             echo $html;die;
         }
-        $pagenum = cookie('ms_pagerow') ? cookie('ms_pagerow') : 10;
+        $pagenum = cookie('pr_pagerow') ? cookie('pr_pagerow') : 10;
         $this->pageRowNum = $pagenum;
         $this->assign("logoLink",Menu::getLogoLink());
         $this->assign('pagerow', $pagenum);
+
     }
 
     /*
@@ -110,7 +111,7 @@ class Base extends Controller {
     /**
      * 删除选中的单条数据
      */
-    public function delchoose(){
+    public function delete(){
         if($this->request->isAjax()){
             try{
                 $file = Env::get('APP_PATH').'common/model/'.$this->useModel.'.php';
@@ -123,16 +124,21 @@ class Base extends Controller {
                 $this->error($e->getMessage());
             }
             $id = $this->request->param('id');
-            $model = new $modelname;
-            $data = $model->find($id);
-            if(!empty($data)){
-                if($data->delete()){
-                    $this->success('操作成功');
+            $id = intval($id);
+            if($id > 0){
+                $model = new $modelname;
+                $data = $model->find($id);
+                if(!empty($data)){
+                    if($data->delete()){
+                        $this->success('操作成功');
+                    }else{
+                        $this->error('操作失败，请重试');
+                    }
                 }else{
-                    $this->error('操作失败，请重试');
+                    $this->error('请正确选择要处理的数据');
                 }
             }else{
-                $this->error('请正确选择要处理的数据');
+                $this->error('非法数据');
             }
         }
     }

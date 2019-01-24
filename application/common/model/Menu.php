@@ -29,7 +29,7 @@ class Menu extends Base {
                     $model = $model->field($fields);
                 }
             }
-            return $model->order('sort',"desc")->select();
+            return $model->order('sort',"asc")->select();
         }
         return null;
     }
@@ -101,7 +101,7 @@ class Menu extends Base {
         $menus = $this->where('position',1)
             ->where('pid',$pid)
             ->whereIn('id',$access)
-            ->order('sort asc')
+            ->order('sort desc')
             ->select();
         if($menus->count() > 0){
             if($pid == 0){
@@ -182,7 +182,7 @@ class Menu extends Base {
             $html .= '<li><a href="'.url($currentMenu['route']).'">'.$currentMenu['title'].'</a></li>';
         }else{
             $h3 = $currentMenu['title'];
-            $icon = !empty($currentMenu['icon']) ? '<i class="'.$currentMenu['icon'].'"></i>' : "";
+            $icon = !empty($currentMenu['icon']) ? '<i class="fa '.$currentMenu['icon'].'"></i>' : "";
             $html .= '<li>'.$icon.'<a href="'.url($currentMenu['route']).'">'.$currentMenu['title'].'</a></li>';
         }
         return ['html'=>$html,'h3'=>$h3];
@@ -192,7 +192,7 @@ class Menu extends Base {
      * 获取目录
      * */
     public function getMenu($pid=0,$arr=array(),$level=0){
-        $menus = $this->where("pid",$pid)->field("id,title")->order('sort')->select();
+        $menus = $this->where("pid",$pid)->field("id,title")->order('sort desc')->select();
          if($menus->count() > 0){
              foreach ($menus as $k=>$v){
                  if(!empty($v->title)){
@@ -201,7 +201,7 @@ class Menu extends Base {
                          $prefix .= "|- ";
                      }
                      $v->title = $prefix.$v->title;
-                     $arr[] = $v;
+                     $arr[$v->id] = $v;
                      $arr = $this->getMenu($v->id,$arr,$level+1);
                  }
              }
@@ -249,7 +249,7 @@ class Menu extends Base {
 
     public function getShowList(){
         $data = [];
-        $pmenu = $this->where('pid','=',0)->select();
+        $pmenu = $this->where('pid','=',0)->order('sort desc')->select();
         if(!empty($pmenu)){
             foreach($pmenu as $menu){
                 $menu->parentTitle = '一级目录';
@@ -262,7 +262,7 @@ class Menu extends Base {
     }
 
     public function getChildMenu($pid ,$title ,$arr=[]){
-        $menu = $this->where('pid','=',$pid)->order('sort asc')->select();
+        $menu = $this->where('pid','=',$pid)->order('sort desc')->select();
         if($menu->count()){
             foreach($menu as $m){
                 $m->parentTitle = $title;

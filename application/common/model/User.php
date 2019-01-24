@@ -2,6 +2,7 @@
 namespace app\common\model;
 
 use think\Model;
+use crypto\Crypt;
 
 class User extends Model{
     protected $pk = "id";//设置主键
@@ -15,6 +16,14 @@ class User extends Model{
         return $this->hasOne('Role',"id",'role_id');
     }
 
+    public function setPasswdAttr($val){
+        return Crypt::encrypt($val,config('web_key'));
+    }
+
+    public function getPasswdAttr($val){
+        return ['original'=>$val,'change'=>Crypt::decrypt($val,config('web_key'))];
+    }
+
     /*
      * 验证登录
      * */
@@ -26,7 +35,7 @@ class User extends Model{
                 session('login_pwd',cookie("ms_login_pwd"));
             }
             $user = User::get(session('login_id'));
-            if($user['passwd'] == session('login_pwd')){
+            if($user->passwd['original'] == session('login_pwd')){
                 $check = true;
             }else{
                 session('login_id',null);

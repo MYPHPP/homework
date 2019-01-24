@@ -46,7 +46,18 @@ class Menu extends Base {
         $model = new Menus();
         if($this->request->isPost()){
             $data = $this->request->param();
-            $data = array_filter($data);
+            $flterVal = function ($arr){
+                $needdata = [];
+                if(!empty($arr)){
+                    foreach($arr as $k=>$v){
+                        if($v != ''){
+                            $needdata[$k] = $v;
+                        }
+                    }
+                }
+                return $needdata;
+            };
+            $data = $flterVal($data);
             $validate = $model->validateData($data);
             if(!$validate['status']) return $this->error($validate['msg']);
             if($model->save($data)){
@@ -69,7 +80,18 @@ class Menu extends Base {
         if(!empty($data)){
             if($this->request->isPost()){
                 $data = $this->request->post();
-                $data = array_filter($data);
+                $flterVal = function ($arr){
+                    $needdata = [];
+                    if(!empty($arr)){
+                        foreach($arr as $k=>$v){
+                            if($v != ''){
+                                $needdata[$k] = $v;
+                            }
+                        }
+                    }
+                    return $needdata;
+                };
+                $data = $flterVal($data);
                 $validate = $model->validateData($data);
                 if(!$validate['status']) return $this->error($validate['msg']);
                 if($model->save($data,['id'=>$id])){
@@ -186,5 +208,23 @@ class Menu extends Base {
             }
         }
         return $ids;
+    }
+
+    public function delete()
+    {
+        $id = $this->request->param('id');
+        $id = intval($id);
+        if($id > 0){
+            $pid = Menus::where('id',$id)->value('pid');
+            if($pid == 0){
+                $dids = $this->getChildIds($id);
+                if(!empty($dids)){
+                    foreach($dids as $did){
+                        Menus::destroy($did);
+                    }
+                }
+            }
+        }
+        parent::delete();
     }
 }
