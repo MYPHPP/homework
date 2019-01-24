@@ -88,9 +88,11 @@
                             </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
+                                {if checkPower(url('bs/user/index'))}
                                 <div class="pull-left">
-                                    <a href="{:url($logoLink)}" class="btn btn-default btn-flat">个人中心</a>
+                                    <a href="{:url('bs/user/index')}" class="btn btn-default btn-flat">个人中心</a>
                                 </div>
+                                {/if}
                                 <div class="pull-right">
                                     <a href="{:url('bs/index/logout')}" class="btn btn-default btn-flat">退出</a>
                                 </div>

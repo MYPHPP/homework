@@ -11,19 +11,24 @@
                     </div>
                     <div class="form-group col-xs-6">
                         <label for="passwd">密码</label>
-                        <input name="passwd" type="password" class="form-control" id="passwd" value="{$loginInfo->passwd['change']}">
+                        <div class="input-group">
+                            <input name="passwd" type="password" class="form-control" id="passwd" value="{$loginInfo->passwd['change']}">
+                            <span class="input-group-addon showpw"><i class="fa fa-eye"></i></span>
+                        </div>
                     </div>
                     <div class="form-group col-xs-6">
                         <label for="role">角色</label>
                         <input name="role" type="text" class="form-control" id="role" value="{$loginInfo->role->name}" disabled>
                     </div>
+                </div>
+                <div class="box-body">
                     <div class="form-group col-xs-6">
                         <label for="create_time">创建时间</label>
                         <input name="create_time" type="text" class="form-control" id="create_time" value="{$loginInfo->create_time}" disabled>
                     </div>
                     <div class="form-group col-xs-6">
                         <label for="update_time">更新时间</label>
-                        <input value="0" name="update_time" type="text" class="form-control" id="update_time" value="{$loginInfo->update_time}" disabled>
+                        <input name="update_time" type="text" class="form-control" id="update_time" value="{$loginInfo->update_time}" disabled>
                     </div>
                 </div>
                 <!-- /.box-body -->
@@ -35,7 +40,13 @@
         </div>
     </div>
 </div>
-{/block}
-{block name="footjs"}
-{load href="/js/menu.js" /}
+<script>
+    $('.showpw').on('click',function () {
+        if($(this).prev().attr('type') == 'password'){
+            $(this).prev().attr('type','text');
+        }else{
+            $(this).prev().attr('type','password');
+        }
+    });
+</script>
 {/block}
