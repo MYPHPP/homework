@@ -139,9 +139,12 @@
                             var domain = document.domain;
                             var jump = protocol+'//'+domain+result.url;
                             setTimeout("window.location.href='"+jump+"';", 1000);
+                        }else{
+                            captchaObj.reset();
                         }
                     },
                     error: function (xhr, type, errorThrown) {
+                        captchaObj.reset();
                         //异常处理；
                         console.log('%csubmit fail!', ';color:#dd4b39');
                         console.log("type:" + type + ",readyState:" + xhr.readyState + ",status:" + xhr.status);

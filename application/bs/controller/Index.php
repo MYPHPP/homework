@@ -37,6 +37,10 @@ class Index extends Controller{
             }
         }
         if($request->isPost()){
+            //验证码验证
+            if(!$this->check_geetest($request)){
+                $this->error('请先进行验证操作!');
+            }
             if(empty($request->name) || empty($request->passwd)){
                 $this->error("信息填写不完整");
             }
@@ -46,16 +50,16 @@ class Index extends Controller{
                 if($user->passwd['change'] != $request->passwd){
                     $this->error('密码错误!');
                 }
-                //验证码验证
-                if(!$this->check_geetest($request)){
-                    $this->error('请先进行验证操作!');
-                }
                 session('login_id',$user->id);
                 session('login_pwd',$user->passwd['original']);
                 if(!empty($request->remember)){
                     cookie("ms_login_id",$user->id,7*86400);
                     cookie("ms_login_pwd",$user->passwd['original'],7*86400);
                 }
+                $user->lastlogin = $user->update_time;
+                $user->ip = $request->ip();
+                $user->locktime = null;
+                $user->save();
                 if(!empty(cookie("ms_currentUrl"))){
                     $this->success('登录成功',cookie("ms_currentUrl"));
                 }else{
@@ -133,23 +137,23 @@ class Index extends Controller{
 
     protected function check_geetest(Request $request)
     {
+        $return = false;
         $geetest = new GeetestLib(config('setting.geetest.id'), config('setting.geetest.key'));
         $data    = array(
             "user_id"     => session('gt_user_id'), # 网站用户id
             "client_type" => "web", #web:电脑上的浏览器；h5:手机上的浏览器，包括移动应用内完全内置的web_view；native：通过原生SDK植入APP应用的方式
             "ip_address"  => $request->ip()
         );
-
         if (session('gtserver') == 1) {   //服务器正常
             $result = $geetest->success_validate($request->param('geetest_challenge'), $request->param('geetest_validate'), $request->param('geetest_seccode'), $data);
             if ($result) {
-                return true;
+                $return = true;
             }
         } else {  //服务器宕机,走failback模式
             if ($geetest->fail_validate($request->param('geetest_challenge'), $request->param('geetest_validate'))) {
-                return true;
+                $return = true;
             }
         }
-        return false;
+        return $return;
     }
 }
