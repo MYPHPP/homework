@@ -31,10 +31,6 @@
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <style>
-        #embed-captcha {
-            width: 300px;
-            margin: 0 auto;
-        }
         .show {
             display: block;
         }
@@ -73,8 +69,8 @@
             <div id="wait" class="alert alert-warning alert-dismissible show" style="padding: 8px;margin-bottom: 10px;">
                 正在加载验证码...
             </div>
-            <div class="row form-group">
-                <div id="embed-captcha"></div>
+            <div class="form-group has-feedback" id="embed-captcha">
+
             </div>
             <div class="row">
                 <div class="col-xs-8">
@@ -167,6 +163,7 @@
             dataType: "json",
             success: function (data) {
                 initGeetest({
+                    width: '100%',
                     gt: data.gt,
                     challenge: data.challenge,
                     new_captcha: data.new_captcha,
