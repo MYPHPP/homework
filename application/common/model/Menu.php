@@ -29,7 +29,7 @@ class Menu extends Base {
                     $model = $model->field($fields);
                 }
             }
-            return $model->order('sort',"asc")->select();
+            return $model->order('sort',"desc")->select();
         }
         return null;
     }
@@ -60,7 +60,7 @@ class Menu extends Base {
      * */
     public function getMenuById($ids,$pid=0,$level=2){
         if($level > 0){
-            $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort")->select()->toArray();
+            $menus = Menu::whereIn('id',$ids)->where('pid',$pid)->where("position",1)->order("sort desc")->select()->toArray();
             if(!empty($menus)){
                 foreach($menus as $k=>$v){
                     $child = $this->getMenuByIds($ids,$v['id'],$level-1);

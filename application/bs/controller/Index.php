@@ -45,10 +45,40 @@ class Index extends Controller{
                 $this->error("信息填写不完整");
             }
             $request->name = filterChar($request->name);
-            $user = $model->where(['name'=>$request->name])->field('id,name,passwd')->find();
+            $user = $model->where(['name'=>$request->name])->find();
             if(!empty($user)){
+                if(!empty($user->locktime)){
+                    $now = time();
+                    $locktime = 1800 + $user->locktime;
+                    $second_locktime = $locktime-60;
+                    if($locktime > $now){
+                        if($second_locktime > time()){
+                            $minu = $locktime-$now;
+                            $wait = $minu%60;
+                            if($wait == 0){
+                                $wait = $minu/60;
+                                $this->error('该账号解封还需'.$wait.'分钟!');
+                            }else{
+                                $num1 = floor($minu/60);
+                                $num2 = $minu-$num1*60;
+                                $this->error('该账号解封还需'.$num1.'分钟'.$num2.'秒!');
+                            }
+                        }else{
+                            $this->error('该账号解封还需'.$locktime-$now.'秒!');
+                        }
+                    }else{
+                        session('login_num',5);
+                    }
+                }
                 if($user->passwd['change'] != $request->passwd){
-                    $this->error('密码错误!');
+                    $login_num = $this->getLoginNum();
+                    if($login_num > 0){
+                        $this->error('密码错误,还剩'.$login_num.'次机会!');
+                    }else{
+                        $user->locktime = time();
+                        $user->save();
+                        $this->error('<b>密码错误,5次机会已用完</b><br/><b>该账号将禁用30分钟</b>');
+                    }
                 }
                 session('login_id',$user->id);
                 session('login_pwd',$user->passwd['original']);
@@ -61,10 +91,12 @@ class Index extends Controller{
                 $user->locktime = null;
                 $user->save();
                 if(!empty(cookie("ms_currentUrl"))){
-                    $this->success('登录成功',cookie("ms_currentUrl"));
+                    $jumpurl = cookie("ms_currentUrl");
                 }else{
-                    $this->success('登录成功',$this->loginJump());
+                    $jumpurl = $this->loginJump();
                 }
+                session('login_num',null);
+                $this->success('登录成功',$jumpurl);
             }else{
                 $this->error('用户不存在!');
             }
@@ -84,7 +116,7 @@ class Index extends Controller{
     /*
      * 登录成功页面跳转
      * */
-    public function loginJump(){;
+    public function loginJump(){
         if(empty(cookie('ms_currentUrl'))){
             $menus = Menu::getUserMenu("route");
             if(!empty($menus) && $menus->count() > 0){
@@ -155,5 +187,15 @@ class Index extends Controller{
             }
         }
         return $return;
+    }
+
+    public function getLoginNum($num = 5){
+        $login_num = session('login_num');
+        if(!isset($login_num)){
+            $login_num = $num;
+        }
+        $login_num--;
+        session('login_num',$login_num);
+        return $login_num;
     }
 }
