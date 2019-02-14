@@ -1,7 +1,7 @@
 <?php
-namespace app\common\model;
+namespace app\bs\model;
 
-use app\common\validate\Menu as validateMenu;
+use app\bs\validate\Menu as validateMenu;
 
 class Menu extends Base {
 

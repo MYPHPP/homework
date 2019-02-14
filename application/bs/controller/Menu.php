@@ -2,8 +2,8 @@
 namespace app\bs\controller;
 
 use app\bs\Base;
-use app\common\model\Menu as Menus;
-use app\common\model\Role;
+use app\bs\model\Menu as Menus;
+use app\bs\model\Role;
 
 class Menu extends Base {
     public function index()

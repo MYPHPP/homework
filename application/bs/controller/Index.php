@@ -1,10 +1,10 @@
 <?php
 namespace app\bs\controller;
 
-use app\common\model\User;
+use app\bs\model\User;
 use think\Controller;
 use think\Request;
-use app\common\model\Menu;
+use app\bs\model\Menu;
 use tools\GeetestLib;
 
 class Index extends Controller{

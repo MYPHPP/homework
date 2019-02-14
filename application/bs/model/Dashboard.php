@@ -1,5 +1,5 @@
 <?php
-namespace app\common\model;
+namespace app\bs\model;
 
 class Dashboard extends Base {
 //    protected $table = "tt_menu";

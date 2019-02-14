@@ -1,8 +1,8 @@
 <?php
 namespace app\bs;
 
-use app\common\model\Menu;
-use app\common\model\User;
+use app\bs\model\Menu;
+use app\bs\model\User;
 use think\Controller;
 use think\facade\Env;
 use think\Request;

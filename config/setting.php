@@ -19,5 +19,7 @@ return [
     'geetest' => [
         'id' => 'e640b8f5958efa09fe7fb628cbcc2d4b',
         'key' => '0f41b56713347f953d30a8ebeeb2a5fe'
-    ]
+    ],
+    //jwt秘钥
+    'jwt_key' => '7a10cb4c09ab7d771e0e3c02c2a1394a'
 ];

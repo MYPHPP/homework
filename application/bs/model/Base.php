@@ -1,5 +1,5 @@
 <?php
-namespace app\common\model;
+namespace app\bs\model;
 
 use think\Model;
 use think\model\concern\SoftDelete;
