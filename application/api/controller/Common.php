@@ -12,13 +12,11 @@ class Common extends Controller
     public function __construct(Request $request)
     {
         parent::__construct();
-        $auth = $request->header('Authorization');
-        $jwt = explode(' ',$auth);
-        $token = isset($jwt[1]) ? $jwt[1] : '';
+        $token = $request->auth_token;
         $res = $this->checkToken($token);
-        if($res['code'] != 200) return json($res);
+        if($res['code'] != 200) exit(json_encode($res));
         $user = User::find($res['msg']);
-        if(!$user) return json(['code'=>202,'msg'=>'用户不存在']);
+        if(!$user) return json(['code'=>10006,'msg'=>'用户不存在']);
         $this->userinfo = $user;
     }
 
@@ -30,13 +28,13 @@ class Common extends Controller
             $decoded = JWT::decode($token, $key, ['HS256']); //HS256方式，这里要和签发的时候对应
             $res = ['code'=>200,'msg'=>$decoded->data->uid];
         } catch(\Firebase\JWT\SignatureInvalidException $e) {  //签名不正确
-            $res = ['code'=>10003,'msg'=>$e->getMessage()];
+            $res = ['code'=>10004,'msg'=>$e->getMessage()];
         }catch(\Firebase\JWT\BeforeValidException $e) {  // 签名在某个时间点之后才能用
-            $res = ['code'=>10002,'msg'=>$e->getMessage()];
+            $res = ['code'=>10003,'msg'=>$e->getMessage()];
         }catch(\Firebase\JWT\ExpiredException $e) {  // token过期
-            $res = ['code'=>10001,'msg'=>$e->getMessage()];
-        }catch(Exception $e) {  //其他错误
-            $res = ['code'=>10000,'msg'=>$e->getMessage()];
+            $res = ['code'=>10002,'msg'=>$e->getMessage()];
+        }catch(\Exception $e) {  //其他错误
+            $res = ['code'=>10005,'msg'=>$e->getMessage()];
         }
         return $res;
     }

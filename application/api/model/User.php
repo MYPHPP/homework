@@ -29,7 +29,7 @@ class User extends Model{
         ];
         $access_token = $token;
         $access_token['scopes'] = 'role_access'; //token标识，请求接口的token
-        $access_token['exp'] = $time+10; //access_token过期时间,这里设置2个小时
+        $access_token['exp'] = $time+300; //access_token过期时间,这里设置2个小时
         $refresh_token = $token;
         $refresh_token['scopes'] = 'role_refresh'; //token标识，刷新access_token
         $refresh_token['exp'] = $time+(86400 * 30); //access_token过期时间,这里设置30天

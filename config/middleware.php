@@ -15,5 +15,5 @@
 return [
     // 默认中间件命名空间
     'default_namespace' => 'app\\http\\middleware\\',
-    'check_login' => app\http\middleware\CheckLogin::class
+    'check_token' => app\http\middleware\CheckToken::class
 ];
