@@ -9,9 +9,12 @@ use think\Request;
 class Common extends Controller
 {
     protected $userinfo;
+    protected $request;
+
     public function __construct(Request $request)
     {
         parent::__construct();
+        $this->request = $request;
         $token = $request->auth_token;
         $res = $this->checkToken($token);
         if($res['code'] != 200) exit(json_encode($res));
