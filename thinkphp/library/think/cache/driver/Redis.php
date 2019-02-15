@@ -212,4 +212,13 @@ class Redis extends Driver
         return $this->handler->flushDB();
     }
 
+    /**
+     * 以秒为单位，返回给定 key 的剩余生存时间
+     * @param $name
+     * @return mixed
+     */
+    public function ttl($name){
+        return $this->handler->ttl($this->getCacheKey($name));
+    }
+
 }
