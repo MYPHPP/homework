@@ -24,17 +24,19 @@ class CheckToken
                 header('Authorization:Bearer '.$newToken);
                 //header('Cache-Control:no-store'); 跨域需要设置
             }else{
-                if($refresh_token = Cache::store('redis')->get('refresh_token:'.$token)){
-                    $res1 = $this->checkToken($refresh_token);
-                    if($res1['code'] != 200) return json(['code'=>$res1['code'],'msg'=>$res1['msg']]);//refersh token失效
-                    //refersh token未失效，根据refersh token刷新access token
-                    $model = new User();
-                    $newToken = $model->refershToken($res1['msg']);
-                    header('Authorization:Bearer '.$newToken);
-                    //header('Cache-Control:no-store'); 跨域需要设置
-                    // 将旧token存储在redis中,30秒内再次请求是有效的
-                    Cache::store('redis')->set('old_access_token:'.$token,$newToken,30);
-                }
+                if(!Cache::store('redis')->has($token)) return json($res);//refersh token失效
+                $refresh_token = Cache::store('redis')->get($token);
+                $res1 = $this->checkToken($refresh_token);
+                if($res1['code'] != 200) return json(['code'=>$res1['code'],'msg'=>$res1['msg']]);//refersh token失效
+                //refersh token未失效，根据refersh token刷新access token
+                $model = new User();
+                $newToken = $model->refershToken($res1['msg']);
+                header('Authorization:Bearer '.$newToken);
+                //header('Cache-Control:no-store'); 跨域需要设置
+                // 将旧token存储在redis中,30秒内再次请求是有效的
+                Cache::store('redis')->set($newToken,$refresh_token,Cache::store('redis')->ttl($token));
+                Cache::store('redis')->rm($token);
+                Cache::store('redis')->set('old_access_token:'.$token,$newToken,30);
             }
         }else{
             return json($res);
