@@ -1,6 +1,7 @@
 <?php
 namespace app\api\controller;
 
+use Firebase\JWT\JWT;
 use think\Request;
 
 use app\api\model\User;
@@ -13,7 +14,12 @@ class Error
         if($res['code'] != 200) exit(json_encode($res));
         $user = User::find($res['msg']);
         if(!$user) return json(['code'=>10006,'msg'=>'用户不存在']);
-        call_user_func_array(array($model,$request->action()),array());
+        try{
+            call_user_func_array(array($model,$request->action()),array());
+        }catch (\Exception $e){
+            echo $e->getMessage();die;
+        }
+
     }
 
     public function checkToken($token){
