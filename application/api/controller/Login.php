@@ -33,4 +33,9 @@ class Login extends Controller
         }
         return json(['code'=>200,'msg'=>$model->createToken($user->id)]);
     }
+
+    public function logout(Request $request){
+        Cache::store('redis')->clear();
+        return json(['code'=>200]);
+    }
 }

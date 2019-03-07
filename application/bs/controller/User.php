@@ -1,7 +1,6 @@
 <?php
 namespace app\bs\controller;
 
-use app\bs\Base;
 use app\bs\model\User as Users;
 
 class User extends Base{

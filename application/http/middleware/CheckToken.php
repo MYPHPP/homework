@@ -15,6 +15,7 @@ class CheckToken
         if(empty($auth)) return json(['code'=>10007,'msg'=>'未登录']);//未登录
         $jwt = explode(' ',$auth);
         if(count($jwt) != 2) return json(['code'=>10001,'msg'=>'authorization参数格式错误']);//参数格式错误
+        if(strtolower($jwt[0]) != 'bearer') return json(['code'=>10001,'msg'=>'authorization参数格式错误']);//参数格式错误
         $token = $jwt[1];
         $res = $this->checkToken($token);
         if($res['code'] == 200){//access token在有效期
@@ -30,13 +31,12 @@ class CheckToken
                 if($res1['code'] != 200) return json(['code'=>$res1['code'],'msg'=>$res1['msg']]);//refersh token失效
                 //refersh token未失效，根据refersh token刷新access token
                 $model = new User();
-                $newToken = $model->refershToken($res1['msg']);
+                $newToken = $model->createToken($res1['msg']);
+                Cache::store('redis')->rm($token);
+                // 将旧token存储在redis中,30秒内再次请求是有效的
+                Cache::store('redis')->set('old_access_token:'.$token,$newToken,30);
                 header('Authorization:Bearer '.$newToken);
                 //header('Cache-Control:no-store'); 跨域需要设置
-                // 将旧token存储在redis中,30秒内再次请求是有效的
-                Cache::store('redis')->set($newToken,$refresh_token,Cache::store('redis')->ttl($token));
-                Cache::store('redis')->rm($token);
-                Cache::store('redis')->set('old_access_token:'.$token,$newToken,30);
             }
         }else{
             return json($res);

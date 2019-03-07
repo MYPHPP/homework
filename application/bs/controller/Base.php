@@ -1,5 +1,5 @@
 <?php
-namespace app\bs;
+namespace app\bs\controller;
 
 use app\bs\model\Menu;
 use app\bs\model\User;

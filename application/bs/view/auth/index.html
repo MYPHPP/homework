@@ -1,0 +1,39 @@
+{extend name="app" /}
+{block name="content"}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            {include file='common/boxheader'}
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width:3%"><input type="checkbox" class="minimal checkbox-master"></th>
+                        <th>角色名称</th>
+                        <th>创建时间</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $lists as $list}
+                    <tr>
+                        <td><input class="minimal checkbox-son" type="checkbox" value="{$list.id}"></td>
+                        <td>{$list.name}</td>
+                        <td>{$list.create_time}</td>
+                        <td class="text-center">
+                            {include file='common/operate'}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            {include file='common/boxfooter'}
+        </div>
+        <!-- /.box -->
+    </div>
+    <!-- /.col -->
+</div>
+{/block}
