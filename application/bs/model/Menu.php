@@ -212,20 +212,19 @@ class Menu extends Base {
     /**
      * 根据路由判断是否有权限
      * @param $url
-     * @param $site
      * @return bool
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function checkUrl($url ,$site=1){
+    public function checkUrl($url){
         $res = false;
         $url = trim($url);
         if(!empty($url)){
             $url = url($url);
             $url = str_replace('.html','',$url);
             $url = ltrim($url,'/');
-            $menu = $this->where('position','=',$site)->where('route','like',$url.'%')->find();
+            $menu = $this->where('route','like',$url.'%')->find();
             $role = User::where('id',session('login_id'))->find();
             if(!empty($role->role->access) && !empty($menu)){
                 $access = explode(',',$role->role->access);
@@ -237,6 +236,11 @@ class Menu extends Base {
         return $res;
     }
 
+    /**
+     * 验证菜单提交数据
+     * @param $data
+     * @return array
+     */
     public function validateData($data){
         $return = ['status'=>true];
         $model = new validateMenu();
@@ -247,6 +251,13 @@ class Menu extends Base {
         return $return;
     }
 
+    /**
+     * 菜单列表
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function getShowList(){
         $data = [];
         $pmenu = $this->where('pid','=',0)->order('sort desc')->select();
@@ -261,6 +272,16 @@ class Menu extends Base {
         return $data;
     }
 
+    /**
+     * 查找对应的下级菜单
+     * @param $pid
+     * @param $title
+     * @param array $arr
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function getChildMenu($pid ,$title ,$arr=[]){
         $menu = $this->where('pid','=',$pid)->order('sort desc')->select();
         if($menu->count()){
@@ -268,6 +289,23 @@ class Menu extends Base {
                 $m->parentTitle = $title;
                 $arr[] = $m;
                 $arr = $this->getChildMenu($m->id ,$m->title ,$arr);
+            }
+        }
+        return $arr;
+    }
+
+    /**
+     * 子菜单id
+     * @param $pid
+     * @param array $arr
+     * @return array
+     */
+    public function getChildMenuids($pid,$arr=[]){
+        $menuids = $this->where('pid',$pid)->order('sort desc')->column('id');
+        if(!empty($menuids)){
+            foreach($menuids as $menuid){
+                $arr[] = $menuid;
+                $arr = $this->getChildMenuids($menuid,$arr);
             }
         }
         return $arr;

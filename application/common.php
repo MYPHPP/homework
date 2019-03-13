@@ -129,8 +129,8 @@ function realtimeOutput(){
 }
 
 if(!function_exists('checkPower')){
-    function checkPower($url ,$site=1){
+    function checkPower($url){
         $model = new Menu();
-        return $model->checkUrl($url ,$site);
+        return $model->checkUrl($url);
     }
 }
