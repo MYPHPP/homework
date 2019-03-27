@@ -11,7 +11,7 @@
  Target Server Version : 50642
  File Encoding         : 65001
 
- Date: 13/02/2019 11:01:36
+ Date: 27/03/2019 14:08:18
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `tp_menu`  (
   `position` tinyint(3) UNSIGNED DEFAULT 1 COMMENT '展示位置 1：左侧菜单 2：列表头部按3：列表底部 4：操作 5：单独方法',
   `icon` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '图标',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台菜单' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tp_menu
@@ -48,7 +48,9 @@ INSERT INTO `tp_menu` VALUES (7, 1548063808, 1548311255, NULL, '批量删除', N
 INSERT INTO `tp_menu` VALUES (8, 1548063822, 1548311255, NULL, '删除', NULL, 3, 0, 'bs/menu/delete', 4, 'fa-trash');
 INSERT INTO `tp_menu` VALUES (9, 1548063866, 1548657805, NULL, '菜单管理', NULL, 2, 10, NULL, 5, 'fa-list-ul');
 INSERT INTO `tp_menu` VALUES (10, 1548311810, 1548316129, NULL, '个人中心', NULL, 0, 0, 'bs/user/index', 1, 'fa-user');
-INSERT INTO `tp_menu` VALUES (11, 1548658425, 1548658458, NULL, '权限管理', NULL, 0, 9, NULL, 1, 'fa-university');
+INSERT INTO `tp_menu` VALUES (11, 1548658425, 1552467325, NULL, '权限管理', NULL, 13, 9, 'bs/auth/index', 1, 'fa-university');
+INSERT INTO `tp_menu` VALUES (12, 1551950799, 1551950799, NULL, '编辑权限', NULL, 11, 0, 'bs/auth/edit', 4, NULL);
+INSERT INTO `tp_menu` VALUES (13, 1552467250, 1552467361, NULL, '角色管理', NULL, 0, 10, NULL, 1, 'fa-users');
 
 -- ----------------------------
 -- Table structure for tp_role
@@ -67,7 +69,7 @@ CREATE TABLE `tp_role`  (
 -- ----------------------------
 -- Records of tp_role
 -- ----------------------------
-INSERT INTO `tp_role` VALUES (1, '超级管理员', '1,2,3,4,5,6,7,8,9,10,11', 1546845458, 1548658425, NULL);
+INSERT INTO `tp_role` VALUES (1, '超级管理员', '1,2,3,4,5,7,8,9,10,11,12,13', 1546845458, 1552467250, NULL);
 
 -- ----------------------------
 -- Table structure for tp_user
@@ -91,6 +93,6 @@ CREATE TABLE `tp_user`  (
 -- ----------------------------
 -- Records of tp_user
 -- ----------------------------
-INSERT INTO `tp_user` VALUES (1, 1546845458, 1548657012, NULL, 'admin', 'bac1df00/7MwxJhLtTD5HXfq2xFqci18kJwaw4e3uv/umN/QaG0', 1, NULL, '192.168.33.1', 2019, NULL);
+INSERT INTO `tp_user` VALUES (1, 1546845458, 1552009742, NULL, 'admin', 'bac1df00/7MwxJhLtTD5HXfq2xFqci18kJwaw4e3uv/umN/QaG0', 1, NULL, '192.168.33.1', 2019, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
