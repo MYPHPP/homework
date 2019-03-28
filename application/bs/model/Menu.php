@@ -5,12 +5,8 @@ use app\bs\validate\Menu as validateMenu;
 
 class Menu extends Base {
 
-    /**
-     * @param $value
-     * @return string
-     */
-    public function setDescriptionAttr($value){
-        return htmlentities($value);
+    public function getDescriptionAttr($val){
+        return htmlspecialchars_decode($val,ENT_QUOTES);
     }
 
     /*
