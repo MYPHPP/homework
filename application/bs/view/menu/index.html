@@ -14,7 +14,9 @@
                         <th>标题</th>
                         <th>父级标题</th>
                         <th>路由</th>
+                        <th>位置</th>
                         <th>创建时间</th>
+                        <th>状态</th>
                         <th class="text-center">操作</th>
                     </tr>
                     </thead>
@@ -27,7 +29,13 @@
                         <td>{$list.title}</td>
                         <td>{$list.parentTitle}</td>
                         <td>{$list.route}</td>
+                        <td>{:config('setting.menu.position')[$list.position]}</td>
                         <td>{$list.create_time}</td>
+                        <td>
+                            <a href="javascript:;" title="点击切换" class="changestatus">
+                                <i class="fa fa-toggle-on {if $list.status eq 1}text-green{else/}fa-flip-horizontal text-gray{/if} fa-2x"></i>
+                            </a>
+                        </td>
                         <td class="text-center">
                             {include file='common/operate'}
                         </td>

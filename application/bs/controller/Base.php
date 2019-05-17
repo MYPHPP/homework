@@ -22,6 +22,7 @@ class Base extends Controller {
         if(!strpos($request->url(),'about')){
             cookie("ms_currentUrl",$request->url());
         }
+        $this->view->engine->layout('app');
         $this->request = $request;
         $this->module = strtolower($request->module());
         $this->contrller = strtolower($request->controller());

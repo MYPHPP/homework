@@ -254,7 +254,24 @@ class Menu extends Base {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getShowList(){
+    public function getShowList($pid=0,$title='一级目录',$data=[],$level=0){
+        $prefix = '';
+        for($i=0;$i<$level;$i++){
+            $prefix .= '|- ';
+        }
+        $menus = $this->where('pid','=',$pid)->order('sort desc')->select();
+        if($menus->count()){
+            foreach($menus as $menu){
+                $menu->parentTitle = $title;
+                $menu->title = $prefix.$menu->title;
+                $data[] = $menu;
+                $data = $this->getShowList($menu->id,$menu->title,$data,$level+1);
+            }
+        }
+        return $data;
+    }
+
+    public function getShowList1(){
         $data = [];
         $pmenu = $this->where('pid','=',0)->order('sort desc')->select();
         if(!empty($pmenu)){
