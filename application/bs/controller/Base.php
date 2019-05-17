@@ -85,9 +85,9 @@ class Base extends Controller {
     public function delAll(){
         if($this->request->isAjax()){
             try{
-                $file = Env::get('APP_PATH').'common/model/'.$this->useModel.'.php';
+                $file = Env::get('APP_PATH').'bs/model/'.$this->useModel.'.php';
                 if(is_file($file)){
-                    $modelname = "\\app\\common\\model\\".$this->useModel;
+                    $modelname = "\\app\\bs\\model\\".$this->useModel;
                 }else{
                     throw new \Exception('该模块模型不存在，请确认后重新提交');
                 }
@@ -114,9 +114,9 @@ class Base extends Controller {
     public function delete(){
         if($this->request->isAjax()){
             try{
-                $file = Env::get('APP_PATH').'common/model/'.$this->useModel.'.php';
+                $file = Env::get('APP_PATH').'bs/model/'.$this->useModel.'.php';
                 if(is_file($file)){
-                    $modelname = "\\app\\common\\model\\".$this->useModel;
+                    $modelname = "\\app\\bs\\model\\".$this->useModel;
                 }else{
                     throw new \Exception('该模块模型不存在，请确认后重新提交');
                 }

@@ -278,13 +278,18 @@ class Menu extends Base {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getChildMenu($pid ,$title ,$arr=[]){
+    public function getChildMenu($pid ,$title ,$arr=[],$level=1){
+        $prefix = '';
+        for($l=1;$l<=$level;$l++){
+            $prefix .= '|- ';
+        }
         $menu = $this->where('pid','=',$pid)->order('sort desc')->select();
         if($menu->count()){
             foreach($menu as $m){
                 $m->parentTitle = $title;
+                $m->title = $prefix.$m->title;
                 $arr[] = $m;
-                $arr = $this->getChildMenu($m->id ,$m->title ,$arr);
+                $arr = $this->getChildMenu($m->id ,$m->title ,$arr,$level++);
             }
         }
         return $arr;

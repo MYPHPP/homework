@@ -158,7 +158,7 @@ $(function () {
     });
 
     $('.choose-del').on('click',function () {
-        var tips = '是否确认删除改数据？';
+        var tips = '是否确认删除该数据？';
         var id = $(this).attr('data-id');
         var url = $(this).attr('data-url');
         id = id*1;

@@ -23,21 +23,23 @@ class Menu extends Base {
 //            'total'     => $list->total(),
 //            'page'      => $list->render()
 //        ]);
-        $length = 10;
-        $offet = $this->request->param('page','1');
-        $offet = intval($offet);
-        if($offet < 1){
-            $offet = 1;
-        }
-        $offet = ($offet-1)*$length;
+//        $length = 10;
+//        $offet = $this->request->param('page','1');
+//        $offet = intval($offet);
+//        if($offet < 1){
+//            $offet = 1;
+//        }
+//        $offet = ($offet-1)*$length;
+//        $data = $model->getShowList();
+//        $total = count($data);
+//        $list = array_slice($data,$offet,$length);
+//        $this->assign([
+//            'lists'     => $list,
+//            'total'     => $total,
+//            'page'     => $this->menuPage($length,$total)
+//        ]);
         $data = $model->getShowList();
-        $total = count($data);
-        $list = array_slice($data,$offet,$length);
-        $this->assign([
-            'lists'     => $list,
-            'total'     => $total,
-            'page'     => $this->menuPage($length,$total)
-        ]);
+        $this->assign('lists',$data);
         return $this->fetch();
     }
 
