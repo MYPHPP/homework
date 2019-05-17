@@ -36,6 +36,4 @@ return [
     'tpl_replace_string' => [
         '__PUBLIC__'=> '../../'
     ],
-    'layout_on' => true,
-    'layout_name' => 'app',
 ];
