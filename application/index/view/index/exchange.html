@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exchange</title>
+</head>
+<body>
+<div>
+    <div style="border:1px solid black;width: 300px;height:500px;overflow: auto;">
+        <div style="width:100%;height: auto;word-wrap:break-word;word-break:break-all;overflow: hidden;">
+            <span class="user">amdin1</span> :
+            <br>
+            <span class="content">fasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasd</span>
+            <p></p>
+        </div>
+        <div style="width:100%;height: auto;word-wrap:break-word;word-break:break-all;overflow: hidden;">
+            <span class="user">amdin1</span> :
+            <br>
+            <span class="content">fasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasd</span>
+            <p></p>
+        </div>
+        <div style="width:100%;height: auto;word-wrap:break-word;word-break:break-all;overflow: hidden;">
+            <span class="user">amdin1</span> :
+            <br>
+            <span class="content">fasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasd</span>
+            <p></p>
+        </div>
+        <div style="width:100%;height: auto;word-wrap:break-word;word-break:break-all;overflow: hidden;">
+            <span class="user" style="float:right">amdin1 :</span>
+            <br>
+            <span class="content">fasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasd</span>
+            <p></p>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <form method="post">
+        <textarea name="name"></textarea>
+        <input type="submit" value="提交">
+    </form>
+</div>
+</body>
+<script src="/asset/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+    var lockReconnect = false;//避免重复连接
+    var wsurl = 'ws://www.tp51.com/index/index/listenHeart';
+</script>
+</html>

@@ -4,16 +4,9 @@ namespace app\index;
 use think\Controller;
 
 class Module extends Controller{
-    protected $module;
-    protected $controller;
-    protected $method;
-    public function __construct()
+    function __construct()
     {
-
-    }
-
-    public function checkRole(){
-
+        parent::__construct();
     }
 
     public function test(){
